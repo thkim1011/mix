@@ -16,6 +16,10 @@ public class Byte {
         return myValue;
     }
 
+    public String toString() {
+        return "" + myValue;
+    }
+
     public int getOverflow() {
         return overflow;
     }

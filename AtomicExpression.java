@@ -1,3 +1,3 @@
-public class AtomicExpression extends Expression {
-    
+public interface AtomicExpression {
+    public abstract int evaluate();
 }

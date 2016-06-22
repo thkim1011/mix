@@ -1,7 +1,7 @@
-public class Symbol extends AtomicExpression{
+public class Symbol {
     String myName;
-    int myValue;
-    public Symbol(String name, int value) {
+    WValue myValue;
+    public Symbol(String name, WValue value) {
         myName = name;
         myValue = value;
     }
@@ -10,7 +10,7 @@ public class Symbol extends AtomicExpression{
         return myName;
     }
 
-    public int getValue() {
+    public WValue getValue() {
         return myValue;
     }
 }

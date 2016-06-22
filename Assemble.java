@@ -17,28 +17,36 @@ public class Assemble {
                 break;
             }
             if(line.charAt(0) != '*') {
-                partitionLines(line, file);
+                file.add(partitionLines(line));
             }
         }
 
         // Store symbols
+
+        // TODO: add error when symbol is added twice
+
+        // Idea: store future references in a queue of some sort...
         ArrayList<Symbol> symbols = new ArrayList<Symbol>();
         int counter = 0;
 
-        for(int i = 0; i < file.size()) {
-            String[] line = file.get(i)
+        for(int i = 0; i < file.size(); i ++) {
+            String[] line = file.get(i);
             if(line[1].equals("EQU")) {
                 //TODO: add error when EQU has no string in location
-                if()
                 symbols.add(new Symbol(line[0], new WValue(line[2])));
             }
-            if(line[1].equals("ORIG")) {
+            else if(line[1].equals("ORIG")) {
                 if(!line[0].equals("")) {
-                    symbols.add(new Symbol(line[0], new WValue(cuonter)));
+                    symbols.add(new Symbol(line[0], new WValue(counter)));
                 }
                 counter = parseInt(line[2]);
             }
-            if(line[2].equals(""))
+            else if(line[1].equals("CON")) {
+                // todo: figure out what this does
+            }
+            else if(line[1].equals("ALF")) {
+                // todo: figure out what this does
+            }
             else {
                 if(!line[0].equals("")) {
                     symbols.add(new Symbol(line[0], new WValue(counter)));
@@ -46,9 +54,14 @@ public class Assemble {
                 counter++;
             }
         }
+
+        // Evaluate and Replace all expressions
+        for(int i = 0; i < file.size(); i ++) {
+            fout.println(convertToByte(line[1]).toString());
+        }
     }
 
-    public static void partitionLines(String line, ArrayList<String[]> file) {
+    public static String[] partitionLines(String line) {
         String location;
         String operator;
         String address;
@@ -92,7 +105,7 @@ public class Assemble {
             address = line.substring(j,i);
         }
         partition[2] = address;
-        file.add(partition);
+        return partition;
     }
 
     public static Byte convertToByte(String command) {

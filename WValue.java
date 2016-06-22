@@ -8,7 +8,7 @@ public class WValue {
     private WValue nextNode;
 
     public WValue(String word) {
-        private int pos = word.find(",");
+        int pos = word.find(",");
         boolean isAggregate = pos != -1;
         String part;
         if(isAggregate) {
