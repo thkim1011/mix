@@ -5,6 +5,8 @@ public class BinaryOperator {
     }
 
     public int evaluate(int a, int b) {
-        if(op.equals(""))
+        switch(myOp) {
+            case ""
+        }
     }
 }
