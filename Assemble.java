@@ -9,15 +9,19 @@ public class Assemble {
         
         // Create and Partition File
         ArrayList<String[]> file = new ArrayList<String[]>();
+        ArrayList<Symbol> symbols = new ArrayList<DeclaredSymbol>();
 
         while(true) {
             String line;
             line = fin.readLine();
+
+            // Break when end of file
             if(line == null) {
                 break;
             }
-            if(line.charAt(0) != '*') {
-                file.add(partitionLines(line));
+
+            if(line.charAt(0) != '*') { // Skip comments
+                file.add(partitionLines(line)); // Partition the lines into the four components
             }
         }
 
@@ -26,7 +30,7 @@ public class Assemble {
         // TODO: add error when symbol is added twice
 
         // Idea: store future references in a queue of some sort...
-        ArrayList<Symbol> symbols = new ArrayList<Symbol>();
+        
         int counter = 0;
 
         for(int i = 0; i < file.size(); i ++) {
@@ -65,7 +69,7 @@ public class Assemble {
         String location;
         String operator;
         String address;
-        String[] partition = new String[3];
+        String[] partition = new String[4];
         // Read line and break if null
 
         // Get location
@@ -93,6 +97,7 @@ public class Assemble {
                 j++;
             }
             address = line.substring(j, j+5);
+            i = j+5;
         }
         else {
             while(line.charAt(j) == ' ') {
@@ -103,10 +108,30 @@ public class Assemble {
                 i++;
             }
             address = line.substring(j,i);
+            while(line.charAt(i) == ' ') {
+                i++;
+            }
         }
         partition[2] = address;
+
+        // Get remarks
+        j = i;
+        while(line.charAt())
         return partition;
     }
+
+    public static String getFirstWord(String line) {
+        int i = 0;
+        while(line.charAt(i) != ' ') {
+            i++;
+        }
+        String first = line.substring(0,i);
+        int j = i;
+        while(line.charAt(i) == ' ') {
+            j++;
+        }
+        line = line.substring(j);
+    } 
 
     public static Byte convertToByte(String command) {
         // TODO: convert to upper case....
