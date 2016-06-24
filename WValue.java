@@ -4,16 +4,19 @@
 
 public class WValue {
     private Expression myExp;
-    private Field myField;
+    private FPart myField;
     private WValue nextNode;
 
     public WValue(String word) {
         int pos = word.find(",");
         boolean isAggregate = pos != -1;
         String part;
+
+        // FInd the part to focus on and separate the 
+        // rest for recursive processing by WValue constructor
         if(isAggregate) {
             part = word.substring(0, pos);
-            nextNode = new Expression(word.substring(pos + 1));
+            nextNode = new WValue(word.substring(pos + 1));
         }
         else {
             part = word;
@@ -25,7 +28,7 @@ public class WValue {
         }
         else {
             myExp = new Expression(word.substring(0, word.indexOf("(")));
-            myField = new Field(word.substring(word.indexOf("(")));
+            myField = new FPart(word.substring(word.indexOf("(")));
         }
     }
 
@@ -47,7 +50,12 @@ public class WValue {
         return nextNode;
     }
 
-    public Word evaluate() {
-        
+    public int evaluate() {
+        if(nextNode == null) {
+            return myExp.evaluate();
+        }
+        else {
+            return myExp.evaluate() + nextNode.evaluate();
+        }
     }
 }

@@ -1,7 +1,9 @@
 public class Byte { 
     private int myValue;
     private int overflow;
-
+    
+    public static int bytesize = 64;
+    
     public Byte(int i) {
         myValue = i/64;
         overflow = i%64;

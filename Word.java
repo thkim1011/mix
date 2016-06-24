@@ -1,7 +1,7 @@
 public class Word {
-    private boolean sign;
+    private int sign;
     private Byte[] a;
-    public Word(boolean sign, Byte a0, Byte a1, Byte a2, Byte a3, Byte a4) {
+    public Word(int sign, Byte a0, Byte a1, Byte a2, Byte a3, Byte a4) {
         a = new Byte[6];
         sign2 = new Byte(sign);
         a[0] = sign2;

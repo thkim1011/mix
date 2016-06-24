@@ -1,16 +1,15 @@
 public class Expression {
-    private boolean sign;
+    private int sign;
     private AtomicExpression value;
     private BinaryOperator op;
     private Expression node; // Linked List Structure
 
     public Expression(String exp) {
         int i = 0;
-        sign = true;
 
         // Check for the sign if it exists
         if(exp.charAt(0) == '+' || exp.charAt(0) == '-') {
-            sign = exp.charAt(0) == '+';
+            sign = (exp.charAt(0) == '+') ? 1 : -1;
             i++;
         }
         int j = i;
@@ -45,8 +44,11 @@ public class Expression {
     }
 
     public int evaluate() {
-        if(sign) {
-            return op.evaluate(value.evaluate(), node.evaluate());
+        if(node == null ) {
+            return value.evaluate();
+        }
+        else {
+            return op.evaluate(sign * value.evaluate(), node.evaluate());
         }
     }
 }

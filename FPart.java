@@ -1,5 +1,9 @@
 public class FPart extends Byte {
-    public FPart(int left, int right) {
+    public FPart(String field) {
         super(left*8 + right);
+    }
+    
+    public FPart(int value) {
+        super(value);
     }
 }
