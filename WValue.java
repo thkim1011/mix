@@ -46,4 +46,8 @@ public class WValue {
     public WValue getNextNode() {
         return nextNode;
     }
+
+    public Word evaluate() {
+        
+    }
 }
