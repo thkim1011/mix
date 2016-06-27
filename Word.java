@@ -11,7 +11,7 @@ public class Word {
         a[5] = a5;
     }
 
-    public toString() {
+    public String toString() {
         return ((a[0].getValue > 0) ? "+" : "-") + " " + a[1] + " " + a[2] + " " + a[3] + " " + a[4] + " " + a[5];
     }
 

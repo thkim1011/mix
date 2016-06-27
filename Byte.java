@@ -20,6 +20,8 @@ public class Byte {
 
     public String toString() {
         return "" + myValue;
+
+        // Implement a way to do binary if sepcificed by commandline arguments
     }
 
     public int getOverflow() {

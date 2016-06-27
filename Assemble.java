@@ -4,16 +4,16 @@ import java.util.*;
 public class Assemble {
     public static int counter = 0;
 
-    public static ArrayList<DefinedSymbol> symbols = new ArrayList<DefinedSymbol>();
+    public static ArrayList<DefinedSymbol> dsymbols = new ArrayList<DefinedSymbol>();
+    public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
+    public static ArrayList<Instruction> futureInstruction = new ArrayList<Instruction>();
 
     public static void main(String[] args) throws IOException{
         // IO
         BufferedReader fin = new BufferedReader(new FileReader(args[0]));
-        PrintWriter fout = new PrintWriter(new BufferedWriter(new FileWriter(args[0].substring(0,args[0].indexOf(".")) + ".machine")));
-        
-        // Create and Partition File
-        Instruction first;
-        Instruction inst;
+        PrintWriter fout = new PrintWriter(new BufferedWriter(new FileWriter(args[0].substring(0,args[0].indexOf(".")) + ".mix")));
+
+        ArrayList<String> assembled = new ArrayList<String>(4000);
 
         while(true) {
             StringBuilder line;
@@ -24,28 +24,51 @@ public class Assemble {
                 break;
             }
 
-            // Otherwise set line to in
-            line = new StringBuilder(in);
-
             if(line.charAt(0) != '*') { // Skip comments
+
+                line = new StringBuilder(in);
                 String[] partition = partitionLine(line);
-                Object[] linePartition = partitionAddress(partition[2]);
-                thisLine = new Instruction(partition[1], )
-                if(inst == null) {
-                    inst = new Instruction(partition[1], linePartition[0], linePartition[1], linePartition[2]);
-                    first = inst;
+                Object[] linePartition = partitionAddress(partition[2], partition[1]);
+
+
+                // Save defined variables
+
+                // TODO: check for invalid variables
+                if(partition[0] != "" && !(partition[0].length() == 2 && partition[0].charAt(1) == 'H' && !isDigit(partition[0].charAt(0))))
+                    dsymbols.add(new DefinedSymbol(partition[0]));
+                else if(partition[0] != "") {
+                    lsymbols.add(new LocalSymbol(partition[0]));
+                }
+                // Search for variables
+                boolean isHere = false;
+                for(int i = 0; i < dsymbols.size(); i ++) {
+                    if(dsymbols.get(i).equals(partition[2])) {
+                        isHere = true; 
+                    }
+                }
+                if(!isHere) {
+                    futureInstruction.add(new Instruction(partition[1], new FutureReference(linePartition[0]), linePartition[1], linePartition[2], counter));
                 }
                 else {
-                    first.setNext() = new Instruction(partition[1], linePartition[0], linePartition[1], linePartition[2]);
+                    Instruction current = new Instruction(partition[1], new Expression(linePartition[0]), linePartition[1], linePartition[2]);
+                    assembled.set(counter, current.toString());
                 }
             }
         }
 
-        // Evaluate and Replace all expressions
-        inst = first; 
-        
+        for(int i = 0; i < futureInstruction.size(); i ++) {
+            assembled.set(futureInstruction.get(i).getCounter(), futureInstruction.toString());
+        }
+
+        for(int i = 0; i < 4000; i ++) {
+            fout.println(assembled.get(i));
+        }
     }
 
+
+    private static boolean isDigit(char i) {
+        return i == '1' || i == '2' || i == '3' || i == '4' || i == '5' || i == '6' || i == '7' || i == '8' || i == '9' || i == '0';
+    }
     public static String[] partitionLine(StringBuilder line) {
         String address;
         String[] partition = new String[3];
@@ -59,7 +82,7 @@ public class Assemble {
 
     public static Object[] partitionAddress(String address, String command) {
         Object[] partition = new Object[3];
-        APart a;
+        String a;
         IPart i;
         FPart f;
 
@@ -83,10 +106,10 @@ public class Assemble {
             partition[1] = new IPart();
         }
         // Extract APart
-        partition[0] = APart(address);
+        partition[0] = address;
     }
 
-    public static String getFirstWord(StringBuilder line) {
+    private static String getFirstWord(StringBuilder line) {
         int i = 0;
         int length = line.length();
         while(i < length && line.charAt(i) != ' ') {
