@@ -9,14 +9,18 @@ public class FutureReference implements Symbol, APart {
 
     public int evaluate() {
         for(int i = 0; i < Assemble.dsymbols.size(); i ++) {
-            if(Assemble.dsymbols.get(i) == myName) {
+            if(Assemble.dsymbols.get(i).getName().equals(myName)) {
                 return Assemble.dsymbols.get(i).evaluate();
             }
         }
-        return value;
+        return myValue;
     }
 
-    public int updateValue(int n) {
-        value = n;
+    public void updateValue(int n) {
+        myValue = n;
+    }
+    
+    public String getName() {
+    	return myName;
     }
 }

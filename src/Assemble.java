@@ -14,6 +14,9 @@ public class Assemble {
         PrintWriter fout = new PrintWriter(new BufferedWriter(new FileWriter(args[0].substring(0,args[0].indexOf(".")) + ".mix")));
 
         ArrayList<String> assembled = new ArrayList<String>(4000);
+        for(int i =0 ;i < 4000; i++) {
+        	assembled.add("");
+        }
 
         while(true) {
             StringBuilder line;
@@ -24,36 +27,66 @@ public class Assemble {
                 break;
             }
 
-            if(line.charAt(0) != '*') { // Skip comments
+            if(in.charAt(0) != '*') { // Skip comments
 
                 line = new StringBuilder(in);
                 String[] partition = partitionLine(line);
-                Object[] linePartition = partitionAddress(partition[2], partition[1]);
+                String[] linePartition = partitionAddress(partition[2], partition[1]);
 
 
                 // Save defined variables
 
                 // TODO: check for invalid variables
-                if(partition[0] != "" && !(partition[0].length() == 2 && partition[0].charAt(1) == 'H' && !isDigit(partition[0].charAt(0))))
+                if(partition[1].equals("EQU")) {
+                	continue;
+                }
+                else if(partition[1].equals("CON")) {
+                	continue;
+                }
+                else if(partition[1].equals("ALF")) {
+                	continue;
+                }
+                else if(partition[1].equals("ORIG")) {
+                	continue;
+                }
+                if(partition[0] != "" && !(partition[0].length() == 2 && partition[0].charAt(1) == 'H' && !isDigit(partition[0].charAt(0)))) {
                     dsymbols.add(new DefinedSymbol(partition[0]));
+                }
                 else if(partition[0] != "") {
                     lsymbols.add(new LocalSymbol(partition[0]));
                 }
                 // Search for variables
                 boolean isHere = false;
                 for(int i = 0; i < dsymbols.size(); i ++) {
-                    if(dsymbols.get(i).equals(partition[2])) {
+                    if(dsymbols.get(i).toString().equals(partition[2])) {
                         isHere = true; 
                     }
                 }
-                if(!isHere) {
-                    futureInstruction.add(new Instruction(partition[1], new FutureReference(linePartition[0]), linePartition[1], linePartition[2], counter));
+
+                // Get Value of IPART
+                IPart iPart = new IPart(linePartition[1]);
+                // Get Value of FPart
+                FPart fPart;
+                if(linePartition[2].equals("")) {
+                    fPart = convertToField(partition[1]);
                 }
                 else {
-                    Instruction current = new Instruction(partition[1], new Expression(linePartition[0]), linePartition[1], linePartition[2]);
+                    fPart = new FPart(linePartition[2]);
+                }
+
+                // If is not declared yet
+                if(!isHere) {
+                    futureInstruction.add(new Instruction(partition[1], new FutureReference(linePartition[0]), iPart, fPart, counter));
+                }
+
+                // Otherwise
+                else {
+                    // Create Instruction and add to memory
+                    Instruction current = new Instruction(partition[1], new FutureReference(linePartition[0]), iPart, fPart);
                     assembled.set(counter, current.toString());
                 }
             }
+            counter ++;
         }
 
         for(int i = 0; i < futureInstruction.size(); i ++) {
@@ -63,6 +96,9 @@ public class Assemble {
         for(int i = 0; i < 4000; i ++) {
             fout.println(assembled.get(i));
         }
+        
+        fin.close();
+        fout.close();
     }
 
 
@@ -80,8 +116,8 @@ public class Assemble {
         return partition;
     }
 
-    public static Object[] partitionAddress(String address, String command) {
-        Object[] partition = new Object[3];
+    public static String[] partitionAddress(String address, String command) {
+        String[] partition = new String[3];
         String a;
         IPart i;
         FPart f;
@@ -89,24 +125,25 @@ public class Assemble {
         // Extract FPart
         int field = address.indexOf("(");
         if (field != -1) {
-            partition[2] = new FPart(address.substring(field));
+            partition[2] = address.substring(field);
             address = address.substring(0, field);
         }
         else {
-            partition[2] = convertToField(command);
+            partition[2] = "";
         }
         
         // Extract IPart
         int index = address.indexOf(",");
         if (index != - 1) {
-            partition[1] = new IPart(address.substring(index));
+            partition[1] = address.substring(index);
             address = address.substring(0, index);
         }
         else {
-            partition[1] = new IPart();
+            partition[1] = "";
         }
         // Extract APart
         partition[0] = address;
+        return partition;
     }
 
     private static String getFirstWord(StringBuilder line) {
@@ -202,11 +239,12 @@ public class Assemble {
             case "HLT": case "SLAX": case "STJ": case "JOV": case "JAP": case "J1P": case "J2P": case "J3P": case "J4P": case "J5P": case "J6P": case "JXP": case "ENTA": case "ENT1": case "ENT2": case "ENT3": case "ENT4": case "ENT5": case "ENT6": case "ENTX": return new FPart(2);
             case "SRAX": case "JNOV": case "JANN": case "J1NN": case "J2NN": case "J3NN": case "J4NN": case "J5NN": case "J6NN": case "JXNN": case "ENNA": case "ENN1": case "ENN2": case "ENN3": case "ENN4": case "ENN5": case "ENN6": case "ENNX": return new FPart(3);
             case "SLC": case "JL": case "JANZ": case "J1NZ": case "J2NZ": case "J3NZ": case "J4NZ": case "J5NZ": case "J6NZ": case "JXNZ": return new FPart(4);
-            case "ADD": case "SUB": case "MUL": case "DIV": case "SRC": case "LDA": case "LD1": case "LD2": case "LD3": case "LD4": case "LD5": case "LD6": case "LDX": case "LDAN": case "LD1N": case "LD2N": case "LD3N": case "LD4N": case "LD5N": case "LD6N": case "LDXN": case "STA": case "ST1": case "ST2": case "ST3": case "ST4": case "ST5": case "ST6": case "STX": case "STJ": case "STZ": case "JE": case "JANP": case "J1NP": case "J2NP": case "J3NP": case "J4NP": case "J5NP": case "J6NP": case "JXNP": case "CMPA": case "CMP1": case "CMP2": case "CMP3": case "CMP4": case "CMP5": case "CMP6": case "CMPX": return new FPart(5);
+            case "ADD": case "SUB": case "MUL": case "DIV": case "SRC": case "LDA": case "LD1": case "LD2": case "LD3": case "LD4": case "LD5": case "LD6": case "LDX": case "LDAN": case "LD1N": case "LD2N": case "LD3N": case "LD4N": case "LD5N": case "LD6N": case "LDXN": case "STA": case "ST1": case "ST2": case "ST3": case "ST4": case "ST5": case "ST6": case "STX": case "STZ": case "JE": case "JANP": case "J1NP": case "J2NP": case "J3NP": case "J4NP": case "J5NP": case "J6NP": case "JXNP": case "CMPA": case "CMP1": case "CMP2": case "CMP3": case "CMP4": case "CMP5": case "CMP6": case "CMPX": return new FPart(5);
             case "FADD": case "FSUB": case "FMUL": case "FDIV": case "FCMP": case "JG": return new FPart(6);
             case "JGE": return new FPart(7);
             case "JNE": return new FPart(8);
             case "JLE": return new FPart(9);
+            default: return new FPart(-1);
         }
     }
 }

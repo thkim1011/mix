@@ -18,6 +18,8 @@ public class BinaryOperator {
             return a* (int) Math.pow(Byte.bytesize,5) / b;
             case ":":
             return 8*a + b;
+            default:
+            	return -1;
         }
     }
 }

@@ -8,7 +8,7 @@ public class WValue {
     private WValue nextNode;
 
     public WValue(String word) {
-        int pos = word.find(",");
+        int pos = word.indexOf(",");
         boolean isAggregate = pos != -1;
         String part;
 
@@ -23,7 +23,7 @@ public class WValue {
             nextNode = null;
         }
         if(word.indexOf("(") != -1) {
-            myExp = new Expression(word.substring());
+            myExp = new Expression(word.substring(1, word.length() - 1));
             myField = null;
         }
         else {
@@ -31,18 +31,18 @@ public class WValue {
             myField = new FPart(word.substring(word.indexOf("(")));
         }
     }
-
+/*
     public WValue(int loc) {
         myExp = new Expression(loc);
         myField = null;
         nextNode = null;
     }
-
+*/
     public Expression getExpression() {
         return myExp;
     }
 
-    public Field getField() {
+    public FPart getField() {
         return myField;
     }
 
