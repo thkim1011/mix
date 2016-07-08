@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Assemble {
     public static int counter = 0;
-
+    public static int byteSize = 64;
     public static ArrayList<DefinedSymbol> dsymbols = new ArrayList<DefinedSymbol>();
     public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
     public static ArrayList<Instruction> futureInstruction = new ArrayList<Instruction>();
@@ -35,7 +35,8 @@ public class Assemble {
 
 
                 // Save defined variables
-
+                dsymbols.add(new DefinedSymbol(partition[0]));
+                
                 // TODO: check for invalid variables
                 if(partition[1].equals("EQU")) {
                 	continue;
@@ -47,6 +48,7 @@ public class Assemble {
                 	continue;
                 }
                 else if(partition[1].equals("ORIG")) {
+                    counter = (new WValue(linePartition[2])).evaluate();
                 	continue;
                 }
                 if(partition[0] != "" && !(partition[0].length() == 2 && partition[0].charAt(1) == 'H' && !isDigit(partition[0].charAt(0)))) {
@@ -162,7 +164,6 @@ public class Assemble {
     }
 
     public static Byte convertToByte(String command) {
-        // TODO: convert to upper case....
         switch(command.toUpperCase()) {
             case "NOP": return new Byte(0);
             case "ADD": return new Byte(1);

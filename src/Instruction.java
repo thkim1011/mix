@@ -1,3 +1,5 @@
+/// TODO: COMPLETELY REDO
+
 public class Instruction extends Word {
     private int myCounter;
 
@@ -14,4 +16,36 @@ public class Instruction extends Word {
     public int getCounter() {
         return myCounter;
     }
+
+    public void execute() {
+
+    }
+
+    /*
+    TODO: this is directly copy and pasted from Word class. adapt to here.
+    
+    public void add(Word other) {
+        // Find the sign
+        int finalSign;
+        if(Math.abs(this.getValue()) < Math.abs(this.getValue())) { // Sign is only inverted in this case
+            if(this.isPositive() && !other.isPositive() || !this.isPositive() && other.isPositive()) {
+                finalSign = other.sign;
+            }
+        }
+        else {
+            finalSign = this.sign;
+        }
+
+        // Add 
+        for(int i = 5; i >= 1; i++) {
+
+        }
+    }
+    
+    public bool isPositive() {
+        return sign >= 0;
+    }
+
+    in addition, a method selfCorrect is to be run in order to fix the values to a proper word. 
+    */
 }

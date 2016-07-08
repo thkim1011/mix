@@ -10,7 +10,6 @@ public class WValue {
     public WValue(String word) {
         int pos = word.indexOf(",");
         boolean isAggregate = pos != -1;
-        String part;
 
         // FInd the part to focus on and separate the 
         // rest for recursive processing by WValue constructor
@@ -31,13 +30,7 @@ public class WValue {
             myField = new FPart(word.substring(word.indexOf("(")));
         }
     }
-/*
-    public WValue(int loc) {
-        myExp = new Expression(loc);
-        myField = null;
-        nextNode = null;
-    }
-*/
+
     public Expression getExpression() {
         return myExp;
     }
@@ -50,7 +43,7 @@ public class WValue {
         return nextNode;
     }
 
-    public int evaluate() {
+    public Word evaluate() {
         if(nextNode == null) {
             return myExp.evaluate();
         }
