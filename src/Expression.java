@@ -1,9 +1,15 @@
 public class Expression {
+	
+	// Instance Variables
     private int sign;
     private AtomicExpression value;
     private BinaryOperator op;
     private Expression node; // Linked List Structure
 
+    /**
+     * Constructor - Takes a String exp and returns 
+     * @param exp
+     */
     public Expression(String exp) {
         int i = 0;
 
@@ -27,16 +33,7 @@ public class Expression {
         // Test if number
         boolean isNumber = true;
         for(int k = 0; k < atom.length(); k ++ ){
-    		if(!(atom.charAt(k) == '0' ||
-    				atom.charAt(k) == '1' ||
-    				atom.charAt(k) == '2' ||
-    				atom.charAt(k) == '3' ||
-    				atom.charAt(k) == '4' ||
-    				atom.charAt(k) == '5' ||
-    				atom.charAt(k) == '6' ||
-    				atom.charAt(k) == '7' ||
-    				atom.charAt(k) == '8' ||
-    				atom.charAt(k) == '9')) {
+    		if(!(isNumber(atom.charAt(k)))) {
     			isNumber = false;
     			break;
     		}
@@ -85,6 +82,15 @@ public class Expression {
         }
     }
 
+    /**
+     * isNumber private method
+     * @param c Character to be checked
+     * @return Returns true if is a number and false otherwise
+     */
+    private boolean isNumber(char c) {
+    	return c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
+    }
+    
     public int evaluate() {
         if(node == null ) {
             return value.evaluate();

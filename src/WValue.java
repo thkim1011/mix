@@ -7,48 +7,67 @@ public class WValue {
     private FPart myField;
     private WValue nextNode;
 
-    public WValue(String word) {
-        int pos = word.indexOf(",");
-        boolean isAggregate = pos != -1;
+    public WValue(String addr) {
+        int pos = addr.indexOf(",");
 
-        // FInd the part to focus on and separate the 
-        // rest for recursive processing by WValue constructor
-        if(isAggregate) {
-            part = word.substring(0, pos);
-            nextNode = new WValue(word.substring(pos + 1));
+        // Look for part
+        if(pos != -1) {
+            nextNode = new WValue(addr.substring(pos + 1)); // Process recursively
+            addr = addr.substring(0, pos);
         }
         else {
-            part = word;
             nextNode = null;
         }
-        if(word.indexOf("(") != -1) {
-            myExp = new Expression(word.substring(1, word.length() - 1));
-            myField = null;
+        
+        // Look for field
+        pos = addr.indexOf("(");
+        if(pos != -1) { // If yes field
+            myExp = new Expression(addr.substring(0, pos));
+            myField = new FPart(addr.substring(addr.indexOf("(")));
         }
-        else {
-            myExp = new Expression(word.substring(0, word.indexOf("(")));
-            myField = new FPart(word.substring(word.indexOf("(")));
+        else { // Otherwise
+        	myExp = new Expression(addr);
+            myField = null; // Null fields represent (0:5) always
         }
     }
-
+    
+    /**
+     * Get Expression
+     * @return Returns an expression to which this represents
+     */
     public Expression getExpression() {
         return myExp;
     }
-
+    
+    /**
+     * Get Field
+     * @return Returns an FPart
+     */
     public FPart getField() {
         return myField;
     }
 
+    /**
+     * Get next node
+     * @return Returns the next node to which this points to
+     */
     public WValue getNextNode() {
         return nextNode;
     }
-
+   
     public Word evaluate() {
-        if(nextNode == null) {
-            return myExp.evaluate();
+        int i = this.myExp.evaluate();
+        int sign = i >= 0 ? 1 : -1;
+        Word w;
+        if(myField == null) {
+        	w = new Word(sign, Math.abs(i));
         }
         else {
-            return myExp.evaluate() + nextNode.evaluate();
+        	w = new Word(sign, Math.abs(i), myField);
         }
+        if(nextNode != null) {
+            w.overwrite(nextNode.evaluate());
+        }
+        return w;
     }
 }

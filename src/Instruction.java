@@ -4,11 +4,11 @@ public class Instruction extends Word {
     private int myCounter;
 
     public Instruction(String command, APart address, IPart index, FPart field) {
-        super(address.evaluate(), new Byte(Math.abs(address.evaluate())/64), new Byte(Math.abs(address.evaluate())%64), index, field, Assemble.convertToByte(command));
+        super(address.evaluate() / Math.abs(address.evaluate()), Math.abs(address.evaluate())/64, Math.abs(address.evaluate())%64, index.getValue(), field.getValue(), Assemble.convertToByte(command));
         myCounter = -1;
     }
     public Instruction(String command, APart address, IPart index, FPart field, int counter) {
-        super(address.evaluate(), new Byte(Math.abs(address.evaluate())/64), new Byte(Math.abs(address.evaluate())%64), index, field, Assemble.convertToByte(command));
+    	super(address.evaluate() / Math.abs(address.evaluate()), Math.abs(address.evaluate())/64, Math.abs(address.evaluate())%64, index.getValue(), field.getValue(), Assemble.convertToByte(command));
         myCounter = counter;
     }
 
