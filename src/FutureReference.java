@@ -1,4 +1,5 @@
-public class FutureReference implements Symbol, APart {
+public class FutureReference implements Symbol, APart, AtomicExpression { 
+	// This shouldn't implement atomic expression but I'm using this as a hack
     private String myName;
     private int myValue;
 

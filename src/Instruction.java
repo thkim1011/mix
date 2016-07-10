@@ -1,20 +1,16 @@
-/// TODO: COMPLETELY REDO
+// TODO: COMPLETELY REDO
 
-public class Instruction extends Word {
-    private int myCounter;
-
-    public Instruction(String command, APart address, IPart index, FPart field) {
-        super(address.evaluate() / Math.abs(address.evaluate()), Math.abs(address.evaluate())/64, Math.abs(address.evaluate())%64, index.getValue(), field.getValue(), Assemble.convertToByte(command));
-        myCounter = -1;
-    }
-    public Instruction(String command, APart address, IPart index, FPart field, int counter) {
-    	super(address.evaluate() / Math.abs(address.evaluate()), Math.abs(address.evaluate())/64, Math.abs(address.evaluate())%64, index.getValue(), field.getValue(), Assemble.convertToByte(command));
-        myCounter = counter;
-    }
-
-
-    public int getCounter() {
-        return myCounter;
+public class Instruction {
+	private String myCommand;
+    private Expression myAddress;
+    private IPart myIndex;
+    private FPart myField;
+    
+    public Instruction(String command, Expression address, IPart index, FPart field) {
+    	myCommand = command;
+    	myAddress = address;
+    	myIndex = index;
+    	myField = field;
     }
 
     public void execute() {

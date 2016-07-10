@@ -26,7 +26,7 @@ public class Expression {
         	temp = exp.charAt(j);
         	j++;
         }while(j < exp.length() && temp != '+' && temp != '-' && temp !='*' && temp != '/' && temp != ':');
-       
+        
         // This is a new atomic expression
         String atom = exp.substring(i,j);
         
@@ -41,6 +41,7 @@ public class Expression {
         if(atom.length() == 0) {
         	isNumber = false;
         }
+        boolean isAssigned = false; // TODO Organize this portion
         //If asterisk
         if(atom.equals("*")) {
         	value = new Asterisk();
@@ -49,13 +50,21 @@ public class Expression {
         else if(isNumber) {
         	value = new Number(Integer.parseInt(atom));
         }
-        
         else {
         	for(int k = 0; k < Assemble.dsymbols.size(); k++) {
         		if(Assemble.dsymbols.get(k).getName().equals(atom)) {
         			value = Assemble.dsymbols.get(k);
+        			isAssigned = true;
+        			break;
         		}
         	}
+        }
+        if(!isAssigned && !isNumber) {
+        	FutureReference future = new FutureReference(atom);
+        	value = future;
+        	op = null;
+        	node = null;
+        	return;
         }
         // If at the end of string, then there is no op or node
         if(j == exp.length()) {

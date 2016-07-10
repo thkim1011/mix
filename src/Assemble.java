@@ -6,17 +6,13 @@ public class Assemble {
     public static int byteSize = 64;
     public static ArrayList<DefinedSymbol> dsymbols = new ArrayList<DefinedSymbol>();
     public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
-    public static ArrayList<Instruction> futureInstruction = new ArrayList<Instruction>();
+    public static Instruction[] assembled = new Instruction[4000];
+    public static ArrayList<Word> constants = new ArrayList<Word>();
 
     public static void main(String[] args) throws IOException{
         // IO
         BufferedReader fin = new BufferedReader(new FileReader(args[0]));
         PrintWriter fout = new PrintWriter(new BufferedWriter(new FileWriter(args[0].substring(0,args[0].indexOf(".")) + ".mix")));
-
-        ArrayList<String> assembled = new ArrayList<String>(4000);
-        for(int i =0 ;i < 4000; i++) {
-        	assembled.add("");
-        }
 
         while(true) {
             StringBuilder line;
@@ -57,13 +53,6 @@ public class Assemble {
                 else if(partition[0] != "") {
                     lsymbols.add(new LocalSymbol(partition[0]));
                 }
-                // Search for variables
-                boolean isHere = false;
-                for(int i = 0; i < dsymbols.size(); i ++) {
-                    if(dsymbols.get(i).toString().equals(partition[2])) {
-                        isHere = true; 
-                    }
-                }
 
                 // Get Value of IPART
                 IPart iPart = new IPart(linePartition[1]);
@@ -75,35 +64,28 @@ public class Assemble {
                 else {
                     fPart = new FPart(linePartition[2]);
                 }
-
-                // If is not declared yet
-                if(!isHere) {
-                    futureInstruction.add(new Instruction(partition[1], new FutureReference(linePartition[0]), iPart, fPart, counter));
-                }
-
-                // Otherwise
-                else {
-                    // Create Instruction and add to memory
-                    Instruction current = new Instruction(partition[1], new FutureReference(linePartition[0]), iPart, fPart);
-                    assembled.set(counter, current.toString());
-                }
+                
+                // Create Instruction and add to memory
+                Instruction current = new Instruction(partition[1], new Expression(linePartition[0]), iPart, fPart);
+                assembled[counter] = current;
             }
             counter ++;
         }
 
-        for(int i = 0; i < futureInstruction.size(); i ++) {
-            assembled.set(futureInstruction.get(i).getCounter(), futureInstruction.get(i).toString());
-        }
-
         for(int i = 0; i < 4000; i ++) {
-            fout.println(assembled.get(i));
+            fout.println(assembled[i]);
         }
         
         fin.close();
         fout.close();
     }
 
-
+    
+    /**
+     * isDigit method
+     * @param i Any character
+     * @return Returns true if the character is a numerical digit and false otherwise
+     */
     private static boolean isDigit(char i) {
         return i == '1' || i == '2' || i == '3' || i == '4' || i == '5' || i == '6' || i == '7' || i == '8' || i == '9' || i == '0';
     }
@@ -118,6 +100,13 @@ public class Assemble {
         return partition;
     }
 
+    
+    /**
+     * partitionAddress method
+     * @param address String referring to the address portion of MIX instruction
+     * @param command String referring to the command portion of MIX instruction
+     * @return A String[3] which contains the address split into its APart, IPart, and FPart
+     */
     public static String[] partitionAddress(String address, String command) {
         String[] partition = new String[3];
 
@@ -145,6 +134,11 @@ public class Assemble {
         return partition;
     }
 
+    /**
+     * getFirstWord method
+     * @param line A mutable string
+     * @return Returns the first string before encountering a space
+     */
     private static String getFirstWord(StringBuilder line) {
         int i = 0;
         int length = line.length();
@@ -160,6 +154,11 @@ public class Assemble {
         return first;
     }
 
+    /**
+     * convertToByte
+     * @param command
+     * @return
+     */
     
     // TODO: convert the following information to a table
     public static Byte convertToByte(String command) {
