@@ -17,6 +17,27 @@ public class Instruction {
 
     }
 
+    public String toString() {
+    	int addr = myAddress.evaluate();
+    	String sign = addr >= 0 ? "+" : "-";
+    	addr = Math.abs(addr);
+    	return "" + sign + " " + 
+    			intToString(addr / 64) + " " +
+    			intToString(addr % 64) + " " +
+    			intToString(myIndex.getValue()) + " " +
+    			intToString(myField.getValue()) + " " +
+    			intToString(Assemble.convertToByte(myCommand));
+    }
+    
+    private String intToString(int x) {
+    	if(x / 10 == 0) {
+    		return "0" + x;
+    	}
+    	else {
+    		return "" + x;
+    	}
+    }
+    
     /*
     TODO: this is directly copy and pasted from Word class. adapt to here.
     

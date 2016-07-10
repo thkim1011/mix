@@ -27,23 +27,22 @@ public class Assemble {
 
                 line = new StringBuilder(in);
                 String[] partition = partitionLine(line);
-                // Test MIXAL Commands first
-                if(partition[1].equals("EQU")) {
-                	continue;
-                }
-                else if(partition[1].equals("CON")) {
-                	continue;
-                }
-                else if(partition[1].equals("ALF")) {
-                	continue;
-                }
-                else if(partition[1].equals("ORIG")) {
-                    counter = (new WValue(partition[2])).evaluate().getValue();
-                	continue;
-                }
-                
+
                 
                 String[] linePartition = partitionAddress(partition[2], partition[1]);
+                
+                
+                
+                if(partition[1].equals("EQU")) {
+                	dsymbols.add(new DefinedSymbol(partition[0], new Expression(partition[2]).evaluate()));
+                	continue;
+                }
+                if(partition[1].equals("CON")) {
+                	continue;
+                }
+                if(partition[1].equals("ALF")) {
+                	continue;
+                }
 
 
                 // Save defined variables
@@ -54,6 +53,12 @@ public class Assemble {
                     lsymbols.add(new LocalSymbol(partition[0]));
                 }
 
+                if(partition[1].equals("ORIG")) {
+                    counter = (new WValue(partition[2])).evaluate().getValue();
+                	continue;
+                }
+                
+                
                 // Get Value of IPART
                 IPart iPart = new IPart(linePartition[1]);
                 // Get Value of FPart

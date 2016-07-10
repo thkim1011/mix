@@ -6,6 +6,10 @@ public class DefinedSymbol implements Symbol, AtomicExpression {
         myName = name;
         myValue = Assemble.counter;
     }
+    public DefinedSymbol(String name, int value) {
+    	myName = name;
+    	myValue = value;
+    }
 
     public String getName() {
         return myName;
