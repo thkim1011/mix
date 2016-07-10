@@ -16,3 +16,6 @@ Once I make the simulator, you should be able to run `java MIX FILENAME` to auto
 * ~~(MOST IMPORTANT) Make this work...~~
 * Make a simulator.
 * Learn how to use git properly.
+
+## Disclaimer
+When I first started this, I did this off of only knowledge of programming and absolutely no knowledge of assemblers. This may be very unconventionally programmed (e.g. are you supposed to check for errors before or as you assemble? I went with the former). 
