@@ -8,4 +8,8 @@ public class Asterisk implements AtomicExpression {
     public int evaluate() {
         return value;
     }
+    
+    public String toString() {
+    	return "*";
+    }
 }

@@ -18,14 +18,21 @@ public class Expression {
             sign = (exp.charAt(0) == '+') ? 1 : -1;
             i++;
         }
-        int j = i;
-        char temp;
-
+        else {
+        	sign = 1;
+        }
+        int j = i + 1;
+        char temp = 0;
+        
         // Increment j until the character is an operator
-        do {
+        while(j < exp.length() ) {
         	temp = exp.charAt(j);
+        	if(temp == '+' || temp == '-' || temp =='*' || temp == '/' || temp == ':') {
+        		break;
+        	}
         	j++;
-        }while(j < exp.length() && temp != '+' && temp != '-' && temp !='*' && temp != '/' && temp != ':');
+        }
+        
         // This is a new atomic expression
         String atom = exp.substring(i,j);
         
@@ -109,5 +116,12 @@ public class Expression {
         else {
             return op.evaluate(sign * value.evaluate(), node.evaluate());
         }
+    }
+    
+    public String toString() {
+    	if(node.toString() == null) {
+    		return (sign == 1 ? "+" : "-") + value.toString() + op.toString();
+    	}
+    	return (sign == 1 ? "+" : "-") + value.toString() + op.toString() + node.toString();
     }
 }

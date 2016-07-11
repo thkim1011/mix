@@ -18,4 +18,8 @@ public class DefinedSymbol implements Symbol, AtomicExpression {
     public int evaluate() {
         return myValue;
     }
+    
+    public String toString() {
+    	return myName;
+    }
 }

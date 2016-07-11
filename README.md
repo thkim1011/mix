@@ -3,7 +3,7 @@
 This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science) and it used MIXAL, an assembly language for MIX which is a hypothetical computer. In addition, I had no access to the internet for four days because it was down. I was new to assembly at the time, so I figured that writing this could help me better understand the book. I thought that it couldn't take more than a couple of days. I was wrong, but I continued the project and this is the result. I hope this proves to be useful. 
 
 ## Status
-Currently, the assembler works except for operations (it can't evaluate 1 + 1 for some reason but this should be a quick fix). I have not made the simulator yet.
+Currently, the assembler works, but I have not made the simulator yet.
 
 ## Usage
 In the terminal or command prompt, type `java assemble FILENAME`.

@@ -78,7 +78,12 @@ public class Assemble {
         }
 
         for(int i = 0; i < 4000; i ++) {
-            fout.println(assembled[i]);
+        	if(assembled[i] == null) {
+        		fout.println("+ 00 00 00 00 00");
+        	}
+        	else {
+        		fout.println(assembled[i]);
+        	}
         }
         
         fin.close();

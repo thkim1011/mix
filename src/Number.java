@@ -8,4 +8,8 @@ public class Number implements AtomicExpression {
     public int evaluate() {
         return myNumber;
     }
+    
+    public String toString() {
+    	return "" + myNumber;
+    }
 }

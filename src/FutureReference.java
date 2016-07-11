@@ -24,4 +24,8 @@ public class FutureReference implements Symbol, APart, AtomicExpression {
     public String getName() {
     	return myName;
     }
+    
+    public String toString() {
+    	return myName;
+    }
 }
