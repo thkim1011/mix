@@ -10,10 +10,6 @@ In the terminal or command prompt, type `java assemble FILENAME`.
 Once I make the simulator, you should be able to run `java MIX FILENAME` to automatically assemble the program and load the simulator. 
 
 ## To do
-* ~~Finish all classes that implements AtomicExpression~~
-* ~~Implement Future variables (which is going to be pretty hard)~~
-* ~~There should be a part where Expression constructor attempts to evaluate the string and convert to one of Number, DefinedSymbol, or Asterick. Find this spot and actually make this work.~~
-* ~~(MOST IMPORTANT) Make this work...~~
 * Make a simulator.
 * Learn how to use git properly.
 
