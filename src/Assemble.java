@@ -8,7 +8,7 @@ public class Assemble {
     public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
     public static Instruction[] assembled = new Instruction[4000];
     public static ArrayList<Word> constants = new ArrayList<Word>();
-
+    
     public static void main(String[] args) throws IOException{
         // IO
         BufferedReader fin = new BufferedReader(new FileReader(args[0]));
@@ -27,8 +27,6 @@ public class Assemble {
 
                 line = new StringBuilder(in);
                 String[] partition = partitionLine(line);
-
-                
                 String[] linePartition = partitionAddress(partition[2], partition[1]);
                 
                 
@@ -99,6 +97,12 @@ public class Assemble {
     private static boolean isDigit(char i) {
         return i == '1' || i == '2' || i == '3' || i == '4' || i == '5' || i == '6' || i == '7' || i == '8' || i == '9' || i == '0';
     }
+    
+    /**
+     * 
+     * @param line
+     * @return
+     */
     public static String[] partitionLine(StringBuilder line) {
         String address;
         String[] partition = new String[3];
@@ -110,7 +114,6 @@ public class Assemble {
         return partition;
     }
 
-    
     /**
      * partitionAddress method
      * @param address String referring to the address portion of MIX instruction

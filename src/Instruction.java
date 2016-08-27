@@ -22,11 +22,11 @@ public class Instruction {
     	String sign = addr >= 0 ? "+" : "-";
     	addr = Math.abs(addr);
     	return "" + sign + " " + 
-    			intToString(addr / 64) + " " +
-    			intToString(addr % 64) + " " +
-    			intToString(myIndex.getValue()) + " " +
-    			intToString(myField.getValue()) + " " +
-    			intToString(Assemble.convertToByte(myCommand));
+    	intToString(addr / 64) + " " +
+    	intToString(addr % 64) + " " +
+    	intToString(myIndex.getValue()) + " " +
+    	intToString(myField.getValue()) + " " +
+    	intToString(Assemble.convertToByte(myCommand));
     }
     
     private String intToString(int x) {
