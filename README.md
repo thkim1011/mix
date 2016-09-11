@@ -1,4 +1,5 @@
-# MIX Simulator and Assembler
+# MIX Simulator and Assembler 
+[![Build Status](https://travis-ci.org/thkim1011/MIX.svg?branch=master)](https://travis-ci.org/thkim1011/MIX)
 ## About
 This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science) and it used MIXAL, an assembly language for MIX which is a hypothetical computer. While reading this book, I finally reached the section of MIXAL (it had a relatively large section on math preceding that), I had no access to the internet because it was down (and was down for the next four days). I was new to assembly at the time, so I figured that writing this could help me better understand the book. I thought that it couldn't take more than a couple of days, but I was wrong. Yet I continued the project and this is the result. I hope this proves to be useful. 
 
