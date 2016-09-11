@@ -2,11 +2,11 @@
 
 public class Instruction {
 	private String myCommand;
-    private Expression myAddress;
+    private APart myAddress;
     private IPart myIndex;
     private FPart myField;
     
-    public Instruction(String command, Expression address, IPart index, FPart field) {
+    public Instruction(String command, APart address, IPart index, FPart field) {
     	myCommand = command;
     	myAddress = address;
     	myIndex = index;
