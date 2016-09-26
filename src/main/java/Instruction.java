@@ -1,5 +1,9 @@
 // TODO: COMPLETELY REDO
+public class Instruction {
+}
 
+
+/*
 public class Instruction {
 	private String myCommand;
     private APart myAddress;
@@ -11,6 +15,9 @@ public class Instruction {
     	myAddress = address;
     	myIndex = index;
     	myField = field;
+    }
+    public Instruction(int a0, int a1, int a2, int a3, int a4, int a5) {
+        
     }
 
     public void execute() {
@@ -64,5 +71,6 @@ public class Instruction {
     }
 
     in addition, a method selfCorrect is to be run in order to fix the values to a proper word. 
-    */
+    
 }
+*/
