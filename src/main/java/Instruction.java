@@ -1,5 +1,8 @@
 // TODO: COMPLETELY REDO
-public class Instruction {
+public class Instruction extends Byte {
+    public Instruction(String command, APart address, IPart index, FPart field) {
+        super(convertToByte(command), address.evaluate(), index.getValue(), field.getValue());
+    }
 }
 
 
