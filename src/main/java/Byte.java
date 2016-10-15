@@ -16,10 +16,17 @@ public class Byte {
     }
 
     public Byte(String command, APart address, IPart index, FPart field) {
-
+    	int addr = address.evaluate();
+    	a0 = addr >= 0 ? 1 : -1;
+    	addr = Math.abs(addr);
+    	a1 = addr / 64;
+    	a2 = addr % 64;
+    	a3 = index.getValue();
+    	a4 = field.getValue();
+    	a5 = Assemble.convertToByte(command);
     }
 
-    public Byte(b0, b1, b2, b3, b4, b5) {
+    public Byte(int b0, int b1, int b2, int b3, int b4, int b5) {
         a0 = b0 / Math.abs(b0);
         a1 = b1;
         a2 = b2;
