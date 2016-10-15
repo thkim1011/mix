@@ -15,6 +15,10 @@ public class Byte {
         a5 = 0;
     }
 
+    public Byte(String command, APart address, IPart index, FPart field) {
+
+    }
+
     public Byte(b0, b1, b2, b3, b4, b5) {
         a0 = b0 / Math.abs(b0);
         a1 = b1;
@@ -24,4 +28,19 @@ public class Byte {
         a5 = b5;
     }
 
+    public void execute() {
+
+    }
+
+    public void NOP() {
+        return;
+    }
+
+    public void ADD(int address) {
+        
+    }
+
+    public void FADD() {
+        //TODO: finish
+    }
 }

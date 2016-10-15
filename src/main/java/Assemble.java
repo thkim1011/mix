@@ -19,7 +19,7 @@ public class Assemble {
 	// Local Symbols
 	public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
 	// Final Result
-	public static Instruction[] assembled = new Instruction[4000];
+	public static Byte[] assembled = new Instruction[4000];
 	// Constants
 	public static ArrayList<Word> constants = new ArrayList<Word>();
 
