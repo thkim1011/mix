@@ -6,9 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class MIX {
-	public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         Assemble.main(args);
         int currentInst = 0;
-        
-	}
+    }
 }

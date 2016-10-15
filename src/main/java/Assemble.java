@@ -1,3 +1,5 @@
+import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Assemble.java
@@ -6,8 +8,6 @@
  * @author Tae Hyung Kim
  */
 
-import java.io.*;
-import java.util.*;
 
 public class Assemble {
 	// Counter represents the memory position which the program is on
@@ -19,7 +19,7 @@ public class Assemble {
 	// Local Symbols
 	public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
 	// Final Result
-	public static Instruction[] assembled = new Instruction[4000];
+	public static Byte[] assembled = new Byte[4000];
 	// Constants
 	public static ArrayList<Word> constants = new ArrayList<Word>();
 
@@ -187,7 +187,7 @@ public class Assemble {
 		}
 		
 		// Create Instruction and add to memory
-		Instruction current = new Instruction(linePartition[1], aPart, iPart, fPart);
+		Byte current = new Byte(linePartition[1], aPart, iPart, fPart);
 		assembled[counter] = current;
 	}
 
@@ -273,7 +273,7 @@ public class Assemble {
 	 */
 
 	// TODO: convert the following information to a table
-	public static Byte convertToByte(String command) {
+	public static int convertToByte(String command) {
 		switch (command.toUpperCase()) {
 		case "NOP":
 			return (0);
