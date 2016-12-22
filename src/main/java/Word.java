@@ -10,15 +10,7 @@ public class Word {
     private int value;
     private boolean overflow;
 
-    /**
-     * Constructor for Word class
-     * @param sign Sign of the word as -1 or 1
-     * @param a1 First byte
-     * @param a2 Second byte
-     * @param a3 Third byte
-     * @param a4 Fourth byte
-     * @param a5 Fifth byte
-     */
+    
     public Word(int sign, int a1, int a2, int a3, int a4, int a5) {
         // Precondition Checking
         if(sign != 1 && sign != -1) {
@@ -51,6 +43,16 @@ public class Word {
         value = ((a[0] >= 0) ? 1 : -1) * (a[1] * 16777216 + a[2] * 262144 + a[3] * 4096 + a[4] * 64 + a[5]);
         
         overflow = false;
+    }
+    public Word(String command, APart address, IPart index, FPart field) {
+    	int addr = address.evaluate();
+    	a[0] = addr >= 0 ? 1 : -1;
+    	addr = Math.abs(addr);
+    	a[1] = addr / 64;
+    	a[2] = addr % 64;
+    	a[3] = index.getValue();
+    	a[4] = field.getValue();
+    	a[5] = Assemble.convertToByte(command);
     }
     
     /**

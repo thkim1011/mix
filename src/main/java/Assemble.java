@@ -8,7 +8,8 @@ import java.util.ArrayList;
  * @author Tae Hyung Kim
  */
 
-
+//TODO: Write down the algorithm for the whole thing because it's getting confusing now. 
+//TODO: Also come back to this algorithm and make it better
 public class Assemble {
 	// Counter represents the memory position which the program is on
 	public static int counter = 0;
@@ -19,7 +20,7 @@ public class Assemble {
 	// Local Symbols
 	public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
 	// Final Result
-	public static Byte[] assembled = new Byte[4000];
+	public static Word[] assembled = new Word[4000];
 	// Constants
 	public static ArrayList<Word> constants = new ArrayList<Word>();
 
@@ -187,7 +188,7 @@ public class Assemble {
 		}
 		
 		// Create Instruction and add to memory
-		Byte current = new Byte(linePartition[1], aPart, iPart, fPart);
+		Word current = new Word(linePartition[1], aPart, iPart, fPart);
 		assembled[counter] = current;
 	}
 
