@@ -66,7 +66,7 @@ public class WValue {
         	w = new Word(sign, Math.abs(i), myField);
         }
         if(nextNode != null) {
-            w.overwrite(nextNode.evaluate());
+            w.setAllBytes(nextNode.evaluate());
         }
         return w;
     }
