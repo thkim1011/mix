@@ -45,8 +45,15 @@ public class Word {
         overflow = false;
     }
     public Word(String command, APart address, IPart index, FPart field) {
+    	a = new Integer[6];
     	int addr = address.evaluate();
-    	a[0] = addr >= 0 ? 1 : -1;
+    	//a[0] = (addr >= 0) ? 1 : -1;
+    	if(addr >= 0) {
+    		a[0] = 1;
+    	}
+    	else {
+    		a[0] = -1;
+    	}
     	addr = Math.abs(addr);
     	a[1] = addr / 64;
     	a[2] = addr % 64;
@@ -145,12 +152,128 @@ public class Word {
      * @param other
      * @param field
      */
-    public void overwrite(Word other) {
+    public int getByte(int pos) {
+    	// Precondition checking
+    	if(!(0 <= pos && pos <= 5)) {
+    		throw new IllegalArgumentException("The given position is invalid.");
+    	}
+    	return a[pos];
+    }
+    public void setByte(int pos, int value) {
+    	// Precondition checking
+    	if(!(0 <= pos && pos <= 5)) {
+    		throw new IllegalArgumentException("The given position is invalid.");
+    	}
+    	a[pos] = value;
+    }
+    public void setAllBytes(Word other) {
     	// Interpret field
     	for (int i = 0; i <= 6; i++) {
     		if(other.a[i] != null) {
     			this.a[i] = other.a[i];
     		}
     	}
+    }
+    
+    public void execute() {
+    	switch(a[5]) {
+    	case 5: HLT();
+    	case 8: LDA();
+    	case 9: LDi(1);
+    	case 10: LDi(2);
+    	case 11: LDi(3);
+    	case 12: LDi(4);
+    	case 13: LDi(5);
+    	case 14: LDi(6);
+    	case 15: LDX();
+    	
+    	}
+    }
+    // Loading Operators
+    private void LDA() {
+    	int address = a[0] * ( a[1] * 64 + a[2] );
+    	int index = a[3];
+    	int field = a[4];
+    	int command = a[5];
+    	int memory = address + MIX.rI[index][0] * (MIX.rI[index][1] * 64 + MIX.rI[index][2]);
+    	int left = field / 8;
+    	int right = field % 8;
+    	if (!(left <= right && 0 <= left && right <= 5)) {
+    		throw new IllegalArgumentException("Field specification must be representible in the form (L:R) where 0 <= L <= R <= 5.");
+    	}
+    	for(int i = 5, counter = right; i >= 0; i--, counter--) {
+    		if(counter >= left) {
+    			MIX.rA[i] = Assemble.assembled[memory].getByte(counter);
+    		}
+    		else {
+    			MIX.rA[i] = 0;
+    		}
+    	}
+    }
+    
+    private void LDi(int i) {
+    	int address = a[0] * ( a[1] * 64 + a[2] );
+    	int index = a[3];
+    	int field = a[4];
+    	int command = a[5];
+    	int memory = address + MIX.rI[index][0] * (MIX.rI[index][1] * 64 + MIX.rI[index][2]);
+    	int left = field / 8;
+    	int right = field % 8;
+    	if (!(left <= right && 0 <= left && right <= 5)) {
+    		throw new IllegalArgumentException("Field specification must be representible in the form (L:R) where 0 <= L <= R <= 5.");
+    	}
+    	for(int j = 2, counter = right; j >= 0; j--, counter--) {
+    		if(counter >= left) {
+    			MIX.rI[i][j] = Assemble.assembled[memory].getByte(counter);
+    		}
+    		else {
+    			MIX.rI[i][j] = 0;
+    		}
+    	}
+    }
+    private void LDX() {
+    	int address = a[0] * ( a[1] * 64 + a[2] );
+    	int index = a[3];
+    	int field = a[4];
+    	int memory = address + MIX.rI[index][0] * (MIX.rI[index][1] * 64 + MIX.rI[index][2]);
+    	int left = field / 8;
+    	int right = field % 8;
+    	if (!(left <= right && 0 <= left && right <= 5)) {
+    		throw new IllegalArgumentException("Field specification must be representible in the form (L:R) where 0 <= L <= R <= 5.");
+    	}
+    	for(int i = 5, counter = right; i >= 0; i--, counter--) {
+    		if(counter >= left) {
+    			MIX.rX[i] = Assemble.assembled[memory].getByte(counter);
+    		}
+    		else {
+    			MIX.rX[i] = 0;
+    		}
+    	}
+    }
+    
+    // Storing Operators
+    private void STA() {
+    	int address = a[0] * ( a[1] * 64 + a[2] );
+    	int index = a[3];
+    	int field = a[4];
+    	int left = field/ 8;
+    	int right = field % 8;
+    	int memory = address + MIX.rI[index][0] * (MIX.rI[index][1] * 64 + MIX.rI[index][2]);
+    	if (!(left <= right && 0 <= left && right <= 5)) {
+    		throw new IllegalArgumentException("Field specification must be representible in the form (L:R) where 0 <= L <= R <= 5.");
+    	}
+    	for(int counter = right, i = 5; counter >= left; counter--, i-- ) {
+    		Assemble.assembled[memory].setByte(counter, MIX.rA[i]);
+    	}
+    }
+    
+    
+    
+    
+    
+    
+    // Miscellaneous Operators
+    private void HLT() {
+    	MIX.isHalted = true;
     }
 }

@@ -128,7 +128,7 @@ public class Assemble {
 			return true;
 		}
 		if (linePartition[1].equals("CON")) {
-			// TODO: Implement CON
+			assembled[counter] = (new WValue(linePartition[2])).evaluate();
 			counter++;
 			return true;
 		}
@@ -184,7 +184,7 @@ public class Assemble {
 
 		}
 		else {
-			aPart = new Expression(addr);
+			aPart = new Expression(addr); // TODO: it seems to be that operators with empty string do not function well.
 		}
 		
 		// Create Instruction and add to memory
