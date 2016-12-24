@@ -1,6 +1,8 @@
 /**
 * A WValue is an expression followed by an F-part or a WValue followed by one. 
 */
+package assembly;
+import main.Word;
 
 public class WValue {
     private Expression myExp;

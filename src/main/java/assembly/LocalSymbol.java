@@ -1,3 +1,5 @@
+package assembly;
+
 public class LocalSymbol {
     private String mySymbol;
     private int myCounter;

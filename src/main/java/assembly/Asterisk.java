@@ -1,3 +1,5 @@
+package assembly;
+
 public class Asterisk implements AtomicExpression {
 	private int value;
 	

@@ -1,6 +1,7 @@
+package assembly;
 import java.io.*;
 import java.util.ArrayList;
-
+import main.Word;
 /**
  * Assemble.java
  * This class contains the assembler and all

@@ -1,3 +1,5 @@
+package assembly;
+
 public class FutureReference implements Symbol, APart { 
     private String myName;
     private int myValue;

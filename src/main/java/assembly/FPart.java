@@ -1,3 +1,5 @@
+package assembly;
+
 public class FPart {
 
     private int myField;

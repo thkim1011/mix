@@ -4,6 +4,10 @@
  *
  */
 
+// TODO: separate getSign and getByte (currently all incorporated into getSign)
+package main;
+import assembly.*;
+
 public class Word {
 	
     private Integer[] a;
@@ -177,19 +181,28 @@ public class Word {
     
     public void execute() {
     	switch(a[5]) {
-    	case 5: HLT();
-    	case 8: LDA();
-    	case 9: LDi(1);
-    	case 10: LDi(2);
-    	case 11: LDi(3);
-    	case 12: LDi(4);
-    	case 13: LDi(5);
-    	case 14: LDi(6);
-    	case 15: LDX();
+    	case 5: HLT(); break;
+    	case 8: LDA(); break;
+    	case 9: LDi(1); break;
+    	case 10: LDi(2); break;
+    	case 11: LDi(3); break;
+    	case 12: LDi(4); break;
+    	case 13: LDi(5); break;
+    	case 14: LDi(6); break;
+    	case 15: LDX(); break;
+    	case 24: STA(); break;
+    	case 25: STi(1); break;
+    	case 26: STi(2); break;
+    	case 27: STi(3); break;
+    	case 28: STi(4); break;
+    	case 29: STi(5); break;
+    	case 30: STi(6); break;
+    	case 31: STX(); break;
     	
     	}
     }
     // Loading Operators
+    
     private void LDA() {
     	int address = a[0] * ( a[1] * 64 + a[2] );
     	int index = a[3];
@@ -251,6 +264,10 @@ public class Word {
     	}
     }
     
+    private void LDAN() {
+    	
+    }
+    
     // Storing Operators
     private void STA() {
     	int address = a[0] * ( a[1] * 64 + a[2] );
@@ -267,7 +284,35 @@ public class Word {
     	}
     }
     
+    private void STX() {
+    	int address = a[0] * ( a[1] * 64 + a[2] );
+    	int index = a[3];
+    	int field = a[4];
+    	int left = field/ 8;
+    	int right = field % 8;
+    	int memory = address + MIX.rI[index][0] * (MIX.rI[index][1] * 64 + MIX.rI[index][2]);
+    	if (!(left <= right && 0 <= left && right <= 5)) {
+    		throw new IllegalArgumentException("Field specification must be representible in the form (L:R) where 0 <= L <= R <= 5.");
+    	}
+    	for(int counter = right, i = 5; counter >= left; counter--, i-- ) {
+    		Assemble.assembled[memory].setByte(counter, MIX.rX[i]);
+    	}
+    }
     
+    private void STi(int i) {
+    	int address = a[0] * ( a[1] * 64 + a[2] );
+    	int index = a[3];
+    	int field = a[4];
+    	int left = field/ 8;
+    	int right = field % 8;
+    	int memory = address + MIX.rI[index][0] * (MIX.rI[index][1] * 64 + MIX.rI[index][2]);
+    	if (!(left <= right && 0 <= left && right <= 5)) {
+    		throw new IllegalArgumentException("Field specification must be representible in the form (L:R) where 0 <= L <= R <= 5.");
+    	}
+    	for(int counter = right, j = 5; counter >= left; counter--, j-- ) {
+    		Assemble.assembled[memory].setByte(counter, MIX.rI[i][j]); //TODO: Test ST1 to ST6. 
+    	}
+    }
     
     
     

@@ -1,3 +1,5 @@
+package assembly;
+
 public class DefinedSymbol implements Symbol, AtomicExpression {
     private String myName;
     private int myValue;

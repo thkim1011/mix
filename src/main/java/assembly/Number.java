@@ -1,3 +1,5 @@
+package assembly;
+
 public class Number implements AtomicExpression {
     private int myNumber; 
 

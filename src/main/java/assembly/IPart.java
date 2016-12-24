@@ -1,3 +1,5 @@
+package assembly;
+
 public class IPart {
 	private int myIndex;
 	

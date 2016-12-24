@@ -1,3 +1,6 @@
+package assembly;
+
+//TODO: try to not use a BinaryOperator class.
 public class BinaryOperator {
     private String myOp;
     public BinaryOperator(String op) {
