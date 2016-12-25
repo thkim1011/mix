@@ -1,32 +1,37 @@
 package main;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+
 import java.io.IOException;
-import java.io.PrintWriter;
 import assembly.Assemble;
+import register.Register;
+import register.JumpRegister;
 
 public class MIX {
-	public static int[] rA = new int[6];
-	public static int[] rX = new int[6];
-	public static int[][] rI = new int[6][3];
-	public static int[] rJ = new int[2];
+	final public static Register rA = new Register(5);
+	final public static Register rX = new Register(5);
+	final public static Register[] rI = { new Register(2), 
+			new Register(2), 
+			new Register(2), 
+			new Register(2), 
+			new Register(2),
+			new Register(2) };
+	final public static Register rJ = new JumpRegister();
+	final public static Word[] memory = new Word[4000];
 	public static boolean overflowToggle = false;
 	public static int comparisonIndicator = 0;
 	public static int currentInst = 0;
 	public static boolean isHalted = false;
-	
-    public static void main(String[] args) throws IOException {
-        Assemble.main(args);
-        
-        while(true) {
-        	//TODO: Find out HOW a MIX computer actually stops itself. Meanwhile, I'm just going to use the HALT.
-        	if(isHalted) {
-        		break;
-        	}
-        	Assemble.assembled[currentInst].execute();
-        	currentInst++;
-        }
-    }
+
+	public static void main(String[] args) throws IOException {
+		Assemble.main(args);
+
+		while (true) {
+			// TODO: Find out HOW a MIX computer actually stops itself.
+			// Meanwhile, I'm just going to use the HALT.
+			if (isHalted) {
+				break;
+			}
+			memory[currentInst].execute();
+			currentInst++;
+		}
+	}
 }

@@ -1,7 +1,12 @@
 package assembly;
 import java.io.*;
 import java.util.ArrayList;
+import main.MIX;
 import main.Word;
+import assembly.symbol.DefinedSymbol;
+import assembly.symbol.FutureReference;
+import assembly.symbol.Symbol;
+
 /**
  * Assemble.java
  * This class contains the assembler and all
@@ -20,19 +25,12 @@ public class Assemble {
 	public static ArrayList<DefinedSymbol> dsymbols = new ArrayList<DefinedSymbol>();
 	// Local Symbols
 	public static ArrayList<LocalSymbol> lsymbols = new ArrayList<LocalSymbol>();
-	// Final Result
-	public static Word[] assembled = new Word[4000];
 	// Constants
 	public static ArrayList<Word> constants = new ArrayList<Word>();
 
 	/**
 	 * Assembles the MIXAL program to MIX. In addition, it stores the program in
 	 * <code>assembled</code> but this might have to change.
-	 * 
-	 * 
-	 * 
-	 * @param args
-	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 		// IO
@@ -81,10 +79,10 @@ public class Assemble {
 		}
 
 		for (int i = 0; i < 4000; i++) {
-			if (assembled[i] == null) {
+			if (MIX.memory[i] == null) {
 				fout.println("+ 00 00 00 00 00");
 			} else {
-				fout.println(assembled[i]);
+				fout.println(MIX.memory[i]);
 			}
 		}
 		fin.close();
@@ -129,7 +127,7 @@ public class Assemble {
 			return true;
 		}
 		if (linePartition[1].equals("CON")) {
-			assembled[counter] = (new WValue(linePartition[2])).evaluate();
+			MIX.memory[counter] = (new WValue(linePartition[2])).evaluate();
 			counter++;
 			return true;
 		}
@@ -190,7 +188,7 @@ public class Assemble {
 		
 		// Create Instruction and add to memory
 		Word current = new Word(linePartition[1], aPart, iPart, fPart);
-		assembled[counter] = current;
+		MIX.memory[counter] = current;
 	}
 
 	/**

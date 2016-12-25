@@ -1,4 +1,4 @@
-package assembly;
+package assembly.symbol;
 
 public interface Symbol {
     public abstract String getName();
