@@ -278,12 +278,31 @@ public class Word {
 	 */
 	private void ADD() {
 		Word V = computeV();
-		
+		Word W = MIX.rA.getWord();
+		boolean overflow = false;
+		for (int i = 5; i >= 1; i--) {
+			int sum = V.getByte(i).getValue() + W.getByte(i).getValue();
+			if(overflow) {
+				sum += 1;
+			}
+			if(sum >= 64) {
+				overflow = true;
+				sum -= 64;
+			}
+			else {
+				overflow = false;
+			}
+			W.setByte(i, new Byte(sum));
+		}
+		MIX.overflowToggle = overflow;
+		MIX.rA.setRegister(W);
 	}
 
 	public void execute() {
 		switch (myBytes[4].getValue()) {
-
+		case 1: 
+			ADD();
+			break;
 		case 8:
 			LDr(MIX.rA);
 			break;
