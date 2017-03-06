@@ -6,14 +6,13 @@ import main.Word;
  * <b>JumpRegister class.</b> The JumpRegister class is a subclass of the
  * Register class and represents a Jump Register.
  * 
- * TODO: Add on to comment. 
- * 
  * TODO: Somehow find a way to make only "friend"
  * classes able to access setRegister.
  * 
  * @author Tae Hyung Kim
  *
  */
+
 public class JumpRegister extends Register {
 	public JumpRegister() {
 		super(2);

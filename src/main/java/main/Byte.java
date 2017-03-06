@@ -17,7 +17,7 @@ package main;
  * @author Tae Hyung Kim
  */
 
-final public class Byte {
+final public class Byte implements Comparable<Byte>{
 	final int myByte;
 
 	/**
@@ -51,5 +51,12 @@ final public class Byte {
 	 */
 	public String toString() {
 		return Integer.toString(myByte);
+	}
+	
+	/**
+	 * <b>compareTo method.</b> This method is required by Comparable. 
+	 */
+	public int compareTo(Byte other) {
+		return this.getValue() - ((Byte) other).getValue();
 	}
 }

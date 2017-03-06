@@ -1,7 +1,7 @@
 # MIX Simulator and Assembler 
 [![Build Status](https://travis-ci.org/thkim1011/MIX.svg?branch=master)](https://travis-ci.org/thkim1011/MIX)
 ## About
-This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science) In this book, the language that is used is MIX Assembly Language, or MIXAL, which is used for the hypothetical computer called MIX (exciting right?). Well, I finally finished the large section on mathematical preliminaries and reached the section introducing MIX and MIXAL, but... I had no access to the internet, and the book is pretty hard, so I decided to create... this! 
+This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science) In this book, the language that is used is MIX Assembly Language, or MIXAL, which is used for the hypothetical computer called MIX (exciting right?). Well, I finally finished the large section on mathematical preliminaries and reached the section introducing MIX and MIXAL, but... I had no access to the internet, and I had no idea how an Assembly language worked, so I decided to create... this! 
 
 ## Status
 Currently, the assembler works (as in if you have a file with no bugs, it might work), but I have not made the simulator yet. I'm currently in the process of catching errors in the assembly process.

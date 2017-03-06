@@ -47,11 +47,11 @@ public class Word {
 		int addr = address.evaluate();
 		mySign = addr >= 0;
 		addr = Math.abs(addr);
-		myBytes[1] = new Byte(addr / 64);
-		myBytes[2] = new Byte(addr % 64);
-		myBytes[3] = new Byte(index.getValue());
-		myBytes[4] = new Byte(field.getValue());
-		myBytes[5] = new Byte(Assemble.convertToByte(command));
+		myBytes[0] = new Byte(addr / 64);
+		myBytes[1] = new Byte(addr % 64);
+		myBytes[2] = new Byte(index.getValue());
+		myBytes[3] = new Byte(field.getValue());
+		myBytes[4] = new Byte(Assemble.convertToByte(command));
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class Word {
 		myBytes = new Byte[5];
 		mySign = x >= 0;
 		x = Math.abs(x);
-		for (int i = 5; i >= 1; i--) {
+		for (int i = 4; i >= 0; i--) {
 			myBytes[i] = new Byte(x % 64);
 			x = x / 64;
 		}
@@ -165,7 +165,7 @@ public class Word {
 			value *= 64;
 			value += myBytes[i].getValue();
 		}
-		return value;
+		return (mySign ? 1 : -1) * value;
 	}
 
 	/**
@@ -274,34 +274,84 @@ public class Word {
 
 	/**
 	 * <b><code>ADD</code> method.</b> This method is equivalent to the ADD
-	 * operator in MIXAL. (12/24/16)
+	 * operator in MIXAL (12/24/16).
+	 * 
+	 * TODO: Code has uhh no aesthetics?
 	 */
-	private void ADD() {
-		Word V = computeV();
-		Word W = MIX.rA.getWord();
+	private void ADD(boolean switchSign) {
 		boolean overflow = false;
-		for (int i = 5; i >= 1; i--) {
-			int sum = V.getByte(i).getValue() + W.getByte(i).getValue();
-			if(overflow) {
-				sum += 1;
+		Word V = computeV();
+		if(switchSign) {
+			V.setSign(!V.getSign());
+		}
+		Word W = MIX.rA.getWord();
+		if(V.getSign() == W.getSign()) {
+			for(int i = 5; i >= 1; i--) {
+				int sum;
+				sum = V.getByte(i).getValue() + W.getByte(i).getValue();
+				if(overflow)
+					sum += 1;
+				W.setByte(i, new Byte(sum));
+				if(sum >= 64) {
+					overflow = true;
+				}
 			}
-			if(sum >= 64) {
-				overflow = true;
-				sum -= 64;
+		}
+		else {
+			boolean sign = true;
+			boolean isSame = true;
+			for(int i = 1; i <= 5; i--) {
+				if(V.getByte(i).compareTo(W.getByte(i)) > 0) {
+					sign = V.getSign();
+					isSame = false;
+					break;
+				}
+				else if(V.getByte(i).compareTo(W.getByte(i)) < 0) {
+					sign = W.getSign();
+					isSame = false;
+					break;
+				}
+			}
+			if(isSame) {
+				for(int i = 1; i <= 5; i++) {
+					W.setByte(i, new Byte(0));
+				}
 			}
 			else {
-				overflow = false;
+				int[] a = new int[5];
+				for(int i = 5; i >= 1; i--) {
+					a[i - 1] = (sign ? 1 : -1) * ((W.getSign() ? 1 : -1) * (W.getByte(i).getValue()) + (V.getSign() ? 1 : -1) * (V.getByte(i).getValue()));
+				}
+				for(int i = 5; i >= 1; i--) {
+					if(a[i - 1] < 0) {
+						a[i - 1] += 64;
+						a[i - 2] -= 1;
+					}
+				}
+				Word w = new Word();
+				for(int i = 5; i >= 1; i--) {
+					w.setByte(i, new Byte(a[i-1]));
+				}
+				MIX.rA.setRegister(w);
 			}
-			W.setByte(i, new Byte(sum));
 		}
 		MIX.overflowToggle = overflow;
 		MIX.rA.setRegister(W);
 	}
 
+	public void MUL() {
+		int V = computeV().getValue();
+		int W = MIX.rA.getValue();
+		
+	}
+	
 	public void execute() {
 		switch (myBytes[4].getValue()) {
 		case 1: 
-			ADD();
+			ADD(false);
+			break;
+		case 2:
+			ADD(true);
 			break;
 		case 8:
 			LDr(MIX.rA);
@@ -410,7 +460,7 @@ public class Word {
 		if (left != 0) {
 			w.setSign(true);
 		}
-		for (int i = right, j = 5; j >= 1; i--, j--) {
+		for (int i = right, j = 4; j >= 0; i--, j--) {
 			if (i >= left) {
 				w.setByte(j, w.getByte(i));
 			}

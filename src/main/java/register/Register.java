@@ -58,7 +58,7 @@ public class Register {
 
 	public int getValue() {
 		int value = 0;
-		for(int i = 0; i < 5; i++) {
+		for(int i = 0; i < mySize; i++) {
 			value *= 64;
 			value += myBytes[i].getValue();
 		}

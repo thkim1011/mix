@@ -5,3 +5,10 @@
 .classpath
 .project
 /test
+/Debug
+/Release
+/.vs
+MIX.sln
+MIX.VC.db
+MIX.vcxproj
+MIX.vcxproj.filters

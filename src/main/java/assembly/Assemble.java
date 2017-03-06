@@ -14,8 +14,8 @@ import assembly.symbol.Symbol;
  * @author Tae Hyung Kim
  */
 
-//TODO: Write down the algorithm for the whole thing because it's getting confusing now. 
-//TODO: Also come back to this algorithm and make it better
+//TODO: Write down the program for the whole thing because it's getting confusing now. 
+//TODO: Also come back to this program and make it better
 public class Assemble {
 	// Counter represents the memory position which the program is on
 	public static int counter = 0;
@@ -78,7 +78,11 @@ public class Assemble {
 			counter++;
 		}
 
-		for (int i = 0; i < 4000; i++) {
+		for (int i = 1; i < 4000; i++) {
+			Instruction inst = MIX.prevMemory[i];
+			if(inst != null) {
+				MIX.memory[i] = new Word(inst.myCommand, inst.myAPart, inst.myIPart, inst.myFPart);
+			}
 			if (MIX.memory[i] == null) {
 				fout.println("+ 00 00 00 00 00");
 			} else {
@@ -187,8 +191,8 @@ public class Assemble {
 		}
 		
 		// Create Instruction and add to memory
-		Word current = new Word(linePartition[1], aPart, iPart, fPart);
-		MIX.memory[counter] = current;
+		Instruction current = new Instruction(linePartition[1], aPart, iPart, fPart);
+		MIX.prevMemory[counter] = current;
 	}
 
 	/**
