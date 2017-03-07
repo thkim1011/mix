@@ -1,4 +1,4 @@
-package assembly;
+package assembly.atom;
 
 public class Number implements AtomicExpression {
     private int myNumber; 

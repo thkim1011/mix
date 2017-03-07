@@ -5,6 +5,7 @@ import main.MIX;
 import main.Word;
 import assembly.symbol.DefinedSymbol;
 import assembly.symbol.FutureReference;
+import assembly.symbol.LocalSymbol;
 import assembly.symbol.Symbol;
 
 /**
@@ -51,6 +52,7 @@ public class Assemble {
 				break;
 			}
 			if (in.charAt(0) == '*') {
+				// Adding Debugging functions stuff...
 				continue;
 			}
 			in = in.toUpperCase();

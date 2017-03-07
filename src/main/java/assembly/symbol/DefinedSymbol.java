@@ -1,7 +1,7 @@
 package assembly.symbol;
 
 import assembly.Assemble;
-import assembly.AtomicExpression;
+import assembly.atom.AtomicExpression;
 
 public class DefinedSymbol implements Symbol, AtomicExpression {
     private String myName;

@@ -1,4 +1,6 @@
-package assembly;
+package assembly.symbol;
+
+import assembly.Assemble;
 
 public class LocalSymbol {
     private String mySymbol;

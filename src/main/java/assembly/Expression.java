@@ -1,5 +1,10 @@
 // TODO: This is like not good.... why is it implementing APart???
 package assembly;
+
+import assembly.atom.Asterisk;
+import assembly.atom.AtomicExpression;
+import assembly.atom.Number;
+
 public class Expression implements APart {
 
 	// Instance Variables
