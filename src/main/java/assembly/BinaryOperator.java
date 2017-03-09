@@ -19,7 +19,7 @@ public class BinaryOperator {
             case "/":
             return a/b;
             case "//":
-            return a* (int) Math.pow(Assemble.byteSize,5) / b;
+            return a* (int) Math.pow(6,5) / b; //TODO: FIX
             case ":":
             return 8*a + b;
             default:

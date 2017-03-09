@@ -1,16 +1,17 @@
 package assembly.atom;
 
-import assembly.Assemble;
+import assembly.symbol.DefinedSymbol;
+import java.util.HashMap;
 
 public class Asterisk implements AtomicExpression {
 	private int value;
 	
 	public Asterisk() {
-		value = Assemble.counter;
+		value = 0;
 	}
 	
-    public int evaluate() {
-        return value;
+    public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+	    return counter;
     }
     
     public String toString() {

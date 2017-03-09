@@ -15,10 +15,5 @@ public class TestOperators {
 		
 		System.out.print("\tA. Without Indices");
 		
-		MIX.memory[0] = new Word(true, 1, 2, 3, 4, 5);
-		Word inst = new Word(true, 0, 0, 0, 5, 8);
-		inst.execute();
-		
-		
 	}
 }
