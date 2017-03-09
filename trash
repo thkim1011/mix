@@ -1,0 +1,251 @@
+
+	/**
+	 * <b><code>LDr</code> method.</b> This method is equivalent to the action
+	 * of LDA, LDX, LD1, etc., of MIXAL. (12/24/16)
+	 */
+	private void LDr(Register reg) {
+		Word w = computeV();
+		reg.setRegister(w);
+	}
+
+	/**
+	 * <b>LDrN method.</b> This method is equivalent to the action of LDAN,
+	 * LDXN, LD1N, etc., of MIXAL. (12/24/16)
+	 */
+	private void LDrN(Register reg) {
+		Word w = computeV();
+		w.setSign(!w.getSign());
+		reg.setRegister(w);
+	}
+
+	/**
+	 * <b><code>STr</code> method.</b> This method is equivalent to the action
+	 * of STA, STX, ST1, etc., of MIXAL. (12/24/16)
+	 */
+	private void STr(Register reg) {
+		Word w = reg.getWord();
+		int field = myBytes[3].getValue();
+		int left = field / 8;
+		int right = field % 8;
+		int M = computeM();
+		for (int i = 5, j = right; j >= left; i--, j--) {
+			MIX.memory[M].setByte(i, w.getByte(j));
+		}
+	}
+
+	/**
+	 * <b><code>STZ</code> method.</b> This method is equivalent to the action
+	 * of STZ of MIXAL. I initially thought about simply creating a register
+	 * stored with 0 and using the STr method, but I figured that would be too
+	 * contrived. I might change my mind though because the code is literally
+	 * the same thing. (12/24/16)
+	 */
+	private void STZ() {
+		Word w = new Word();
+		int field = myBytes[3].getValue();
+		int left = field / 8;
+		int right = field % 8;
+		int M = computeM();
+		for (int i = 5, j = right; j >= left; i--, j--) {
+			MIX.memory[M].setByte(i, w.getByte(j));
+		}
+	}
+
+	/**
+	 * <b><code>ADD</code> method.</b> This method is equivalent to the ADD
+	 * operator in MIXAL (12/24/16).
+	 * 
+	 * TODO: Code has uhh no aesthetics?
+	 */
+	private void ADD(boolean switchSign) {
+		boolean overflow = false;
+		Word V = computeV();
+		if(switchSign) {
+			V.setSign(!V.getSign());
+		}
+		Word W = MIX.rA.getWord();
+		if(V.getSign() == W.getSign()) {
+			for(int i = 5; i >= 1; i--) {
+				int sum;
+				sum = V.getByte(i).getValue() + W.getByte(i).getValue();
+				if(overflow)
+					sum += 1;
+				W.setByte(i, new Byte(sum));
+				if(sum >= 64) {
+					overflow = true;
+				}
+			}
+		}
+		else {
+			boolean sign = true;
+			boolean isSame = true;
+			for(int i = 1; i <= 5; i--) {
+				if(V.getByte(i).compareTo(W.getByte(i)) > 0) {
+					sign = V.getSign();
+					isSame = false;
+					break;
+				}
+				else if(V.getByte(i).compareTo(W.getByte(i)) < 0) {
+					sign = W.getSign();
+					isSame = false;
+					break;
+				}
+			}
+			if(isSame) {
+				for(int i = 1; i <= 5; i++) {
+					W.setByte(i, new Byte(0));
+				}
+			}
+			else {
+				int[] a = new int[5];
+				for(int i = 5; i >= 1; i--) {
+					a[i - 1] = (sign ? 1 : -1) * ((W.getSign() ? 1 : -1) * (W.getByte(i).getValue()) + (V.getSign() ? 1 : -1) * (V.getByte(i).getValue()));
+				}
+				for(int i = 5; i >= 1; i--) {
+					if(a[i - 1] < 0) {
+						a[i - 1] += 64;
+						a[i - 2] -= 1;
+					}
+				}
+				Word w = new Word();
+				for(int i = 5; i >= 1; i--) {
+					w.setByte(i, new Byte(a[i-1]));
+				}
+				MIX.rA.setRegister(w);
+			}
+		}
+		MIX.overflowToggle = overflow;
+		MIX.rA.setRegister(W);
+	}
+
+	public void MUL() {
+		int V = computeV().getValue();
+		int W = MIX.rA.getValue();
+		
+	}
+	
+	public void execute() {
+		switch (myBytes[4].getValue()) {
+		case 1: 
+			ADD(false);
+			break;
+		case 2:
+			ADD(true);
+			break;
+		case 8:
+			LDr(MIX.rA);
+			break;
+		case 9:
+			LDr(MIX.rI[0]);
+			break;
+		case 10:
+			LDr(MIX.rI[1]);
+			break;
+		case 11:
+			LDr(MIX.rI[2]);
+			break;
+		case 12:
+			LDr(MIX.rI[3]);
+			break;
+		case 13:
+			LDr(MIX.rI[4]);
+			break;
+		case 14:
+			LDr(MIX.rI[5]);
+			break;
+		case 15:
+			LDr(MIX.rX);
+			break;
+		case 16:
+			LDrN(MIX.rA);
+			break;
+		case 17:
+			LDrN(MIX.rI[0]);
+			break;
+		case 18:
+			LDrN(MIX.rI[1]);
+			break;
+		case 19:
+			LDrN(MIX.rI[2]);
+			break;
+		case 20:
+			LDrN(MIX.rI[3]);
+			break;
+		case 21:
+			LDrN(MIX.rI[4]);
+			break;
+		case 22:
+			LDrN(MIX.rI[5]);
+			break;
+		case 23:
+			LDrN(MIX.rX);
+			break;
+		case 24:
+			STr(MIX.rA);
+			break;
+		case 25:
+			STr(MIX.rI[0]);
+			break;
+		case 26:
+			STr(MIX.rI[1]);
+			break;
+		case 27:
+			STr(MIX.rI[2]);
+			break;
+		case 28:
+			STr(MIX.rI[3]);
+			break;
+		case 29:
+			STr(MIX.rI[4]);
+			break;
+		case 30:
+			STr(MIX.rI[5]);
+			break;
+		case 31:
+			STr(MIX.rX);
+			break;
+		case 32:
+			STr(MIX.rJ);
+			break;
+		case 33:
+			STZ();
+			break;
+		}
+	}
+
+	/**
+	 * <b>computeM method.</b> This method is used to find the value of M that
+	 * is commonly referenced in the book as the address indexed by the given
+	 * index. (12/24/16)
+	 */
+	private int computeM() {
+		return (mySign ? 1 : -1) * (myBytes[0].getValue() * 64 + myBytes[1].getValue())
+				+ MIX.rI[myBytes[2].getValue()].getValue();
+	}
+
+	/**
+	 * <b>computeV method.</b> In TAoCP, the use of the letter V to denote the
+	 * specified field of CONTENTS(M) is mentioned. Since this is used in four
+	 * different operators (namely ADD, SUB, MUL, and DIV), I created a separate
+	 * method to compute this word. In addition, this allowed me to simplify
+	 * both the LDr and LDrN methods. (12/24/16)
+	 * 
+	 */
+	private Word computeV() {
+		Word w = MIX.memory[computeM()].getCopy();
+		int field = myBytes[3].getValue();
+		int left = field / 8;
+		int right = field % 8;
+		if (left != 0) {
+			w.setSign(true);
+		}
+		for (int i = right, j = 4; j >= 0; i--, j--) {
+			if (i >= left) {
+				w.setByte(j, w.getByte(i));
+			}
+			else {
+				w.setByte(j, new Byte(0));
+			}
+		}
+		return w;
+	}

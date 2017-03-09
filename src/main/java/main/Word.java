@@ -7,7 +7,7 @@ import assembly.IPart;
 import register.Register;
 
 /**
- * <b>Word class.</b> This class is rather universally used within the project,
+ * <b>Word class.</b> This class is universally used within the project,
  * so I decided to add this to the main package. Also, this is my first time
  * trying to use packages, so it may not be very well organized(?). Anyways, the
  * Word class is used to store a MIX word as Donald Knuth describes it: A

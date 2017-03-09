@@ -2,12 +2,23 @@ package assembly.symbol;
 
 import assembly.Assemble;
 
+/**
+ * <b>LocalSymbol class.</b> This class is an abstraction of a local symbol in MIXAL. 
+ * @author Tae Hyung Kim
+ *
+ */
 public class LocalSymbol {
-    private String mySymbol;
     private int myCounter;
 
-    public LocalSymbol(String symbol) {
-        mySymbol = symbol;
-        myCounter = Assemble.counter;
+    public LocalSymbol() {
+        myCounter = -1;
+    }
+    
+    public void setCounter(int counter) {
+    	myCounter = counter;
+    }
+    
+    public int getCounter() {
+    	return myCounter;
     }
 }
