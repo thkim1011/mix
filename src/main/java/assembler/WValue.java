@@ -2,7 +2,10 @@
 * A WValue is an expression followed by an F-part or a WValue followed by one. 
 */
 package assembly;
+import assembly.symbol.DefinedSymbol;
 import main.Word;
+
+import java.util.HashMap;
 
 public class WValue {
     private Expression myExp;
@@ -57,18 +60,18 @@ public class WValue {
         return nextNode;
     }
    
-    public Word evaluate() {
-        int i = this.myExp.evaluate();
+    public Word evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+        int i = this.myExp.evaluate(counter, definedSymbols);
         int sign = i >= 0 ? 1 : -1;
         Word w;
         if(myField == null) {
         	w = new Word(sign, Math.abs(i));
         }
         else {
-        	w = new Word(sign, Math.abs(i), myField);
+        	w = new Word(sign, Math.abs(i), myField, counter, definedSymbols);
         }
         if(nextNode != null) {
-            w.setAllBytes(nextNode.evaluate());
+            w.setAllBytes(nextNode.evaluate(counter, definedSymbols));
         }
         return w;
     }

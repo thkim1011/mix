@@ -3,6 +3,8 @@ package assembly.symbol;
 import assembly.Assemble;
 import assembly.APart;
 
+import java.util.HashMap;
+
 
 public class FutureReference implements Symbol, APart { 
     private String myName;
@@ -18,7 +20,7 @@ public class FutureReference implements Symbol, APart {
         myPosition = position;
     }
 
-    public int evaluate() {
+    public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
         return myValue;
     }
     

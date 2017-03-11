@@ -12,9 +12,9 @@ import assembly.Assemble;
 public class TestAssembly {
 	@Test
 	public void TestAllFiles() throws IOException {
-		String[] file = new String[1];
-		file[0] = "src/test/mixSource/Maximum.mixal";
-		Assemble.main(file);
+		String fileIn = "src/test/mixSource/Maximum.mixal";
+		String fileOut = "src/test/mixSource/Maximum.mix";
+		Assemble assembler = new Assemble(fileIn, fileOut);
 		BufferedReader Maximum1 = new BufferedReader(new FileReader("src/test/mixSource/Maximum.mix"));
 		BufferedReader Maximum2 = new BufferedReader(new FileReader("src/test/mixSource/MaximumExpected.mix"));
 		

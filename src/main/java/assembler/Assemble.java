@@ -41,14 +41,15 @@ public class Assemble {
      * contains the methods to assemble a myProgram written in MIXAL to MIX
      * machine code.
      *
-     * @param filename Name of the file which contains the MIX assembly myProgram.
+     * @param filenameIn Name of the file which contains the MIX assembly myProgram.
      * @throws IOException
      */
-    public Assemble(String filename) throws IOException {
+    public Assemble(String filenameIn, String filenameOut) throws IOException {
         myCounter = 0;
         myByteSize = 64;
         myDefinedSymbols = new HashMap<String, DefinedSymbol>();
         myLocalSymbols = new ArrayList<LocalSymbol>();
+        myFutureReferences = new ArrayList<FutureReference>();
         myConstants = new ArrayList<Word>();
         myProgram = new ArrayList<String>();
         myFormattedProgram = new ArrayList<String[]>();
@@ -64,17 +65,20 @@ public class Assemble {
         }
 
         // Deal with input output stuff
-        BufferedReader fileIn = new BufferedReader(new FileReader(filename));
-        PrintWriter fileOut = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+        BufferedReader fileIn = new BufferedReader(new FileReader(filenameIn));
+        PrintWriter fileOut = new PrintWriter(new BufferedWriter(new FileWriter(filenameOut)));
 
         // Write the Program to the variable myProgram
         // Also add to the myFormattedProgram
         while (true) {
             String line = fileIn.readLine();
-            line = line.toUpperCase();
+
             if (line == null) {
                 break;
             }
+
+            line = line.toUpperCase();
+
             if (!line.equals("") && line.charAt(0) == '*') {
                 // TODO: Deal with these comments
                 continue;
@@ -108,17 +112,17 @@ public class Assemble {
             // Process MIX commands
             if (command.equals("ORIG")) {
                 WValue addr = new WValue(address);
-                myCounter = addr.evaluate().getValue();
+                myCounter = addr.evaluate(myCounter, myDefinedSymbols).getValue();
                 continue;
             }
             if (command.equals("EQU")) {
                 WValue addr = new WValue(address);
-                myDefinedSymbols.get(symbol).setValue(addr.evaluate().getValue());
+                myDefinedSymbols.get(symbol).setValue(addr.evaluate(myCounter, myDefinedSymbols).getValue());
                 continue;
             }
             if (command.equals("CON")) {
                 WValue addr = new WValue(address);
-                myAssembled[myCounter] = addr.evaluate();
+                myAssembled[myCounter] = addr.evaluate(myCounter, myDefinedSymbols);
                 myCounter++;
                 continue;
             }
@@ -148,14 +152,14 @@ public class Assemble {
         for(int i =0 ; i < myFutureReferences.size(); i++) {
             int position = myFutureReferences.get(i).getPosition();
             String name = myFutureReferences.get(i).getName();
-            int value = myDefinedSymbols.get(name).evaluate();
+            int value = myDefinedSymbols.get(name).evaluate(myCounter, myDefinedSymbols);
             myAssembled[position].setSign(true);
             myAssembled[position].setByte(1, new Byte(value/64));
             myAssembled[position].setByte(2, new Byte(value%64));
         }
 
         for(int i = 0; i < 4000; i++) {
-            fileOut.write(myAssembled[i].toString());
+            fileOut.println(myAssembled[i].toString());
         }
     }
 
@@ -197,16 +201,16 @@ public class Assemble {
 			 * if(addr.charAt(0) == '=') { aPart = new LiteralConstant(addr); }
 			 */
             else {
-                aPart = new Expression(addr, myCounter, myDefinedSymbols); // TODO: bad code... need to fix
+                aPart = new Expression(addr); // TODO: bad code... need to fix
             }
 
         } else {
-            aPart = new Expression(addr, myCounter, myDefinedSymbols);
+            aPart = new Expression(addr);
             // TODO: it seems to be that operator with empty string do not function well.
         }
 
         // Create Instruction and add to memory
-        myAssembled[myCounter] = new Word(linePartition[1], aPart, iPart, fPart);
+        myAssembled[myCounter] = new Word(linePartition[1], aPart, iPart, fPart, myCounter, myDefinedSymbols);
 
 
     }
