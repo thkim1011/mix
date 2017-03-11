@@ -1,7 +1,6 @@
-package assembly.symbol;
+package assembler.symbol;
 
-import assembly.Assemble;
-import assembly.APart;
+import assembler.APart;
 
 import java.util.HashMap;
 
@@ -11,8 +10,8 @@ public class FutureReference implements Symbol, APart {
     private int myValue;
     private int myPosition;
 
-    public FutureReference(String addr, int position) {
-    	if(!Symbol.isValidSymbolName(addr)) {
+    public FutureReference(String addr, int position, boolean isComputerGenerated) {
+    	if(!isComputerGenerated && !Symbol.isValidSymbolName(addr)) {
     		throw new IllegalArgumentException("Your Future Reference is not a valid variable name.");
     	}
         myName = addr;

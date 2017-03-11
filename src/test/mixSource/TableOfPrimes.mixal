@@ -1,5 +1,5 @@
 * EXAMPLE PROGRAM ... TABLE OF PRIMES
-*
+* Source
 L       EQU  500
 PRINTER EQU  18
 PRIME   EQU  -1

@@ -169,7 +169,6 @@ public class Constants {
 		
 		// Comparison Operators
 		commands.put("CMPA", new Pair(56, 5));
-		commands.put("CMPA", new Pair(56, 6));
 		commands.put("CMP1", new Pair(57, 5));
 		commands.put("CMP2", new Pair(58, 5));
 		commands.put("CMP3", new Pair(59, 5));

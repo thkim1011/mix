@@ -1,4 +1,4 @@
-package assembly;
+package assembler;
 
 //TODO: try to not use a BinaryOperator class.
 public class BinaryOperator {

@@ -1,6 +1,6 @@
-package assembly.atom;
+package assembler.atom;
 
-import assembly.symbol.DefinedSymbol;
+import assembler.symbol.DefinedSymbol;
 
 import java.util.HashMap;
 

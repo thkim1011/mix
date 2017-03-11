@@ -1,8 +1,8 @@
 /**
 * A WValue is an expression followed by an F-part or a WValue followed by one. 
 */
-package assembly;
-import assembly.symbol.DefinedSymbol;
+package assembler;
+import assembler.symbol.DefinedSymbol;
 import main.Word;
 
 import java.util.HashMap;

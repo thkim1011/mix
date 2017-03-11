@@ -2,7 +2,7 @@ package test;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import register.Register;
+import simulator.register.Register;
 import main.Word;
 
 public class TestRegister {

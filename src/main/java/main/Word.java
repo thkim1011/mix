@@ -1,10 +1,11 @@
 package main;
 
-import assembly.Assemble;
-import assembly.APart;
-import assembly.FPart;
-import assembly.IPart;
-import register.Register;
+import assembler.APart;
+import assembler.FPart;
+import assembler.IPart;
+import assembler.symbol.DefinedSymbol;
+
+import java.util.HashMap;
 
 /**
  * <b>Word class.</b> This class is universally used within the project,
@@ -37,22 +38,22 @@ public class Word {
     /**
      * <b>Constructor for Word Class.</b> This constructor takes in the normal
      * parts of a MIX command and stores it as a Word object. This constructor
-     * is primarily used for the assembly process.
+     * is primarily used for the assembler process.
      * <p>
      * TODO: I need to figure out how java deals with signs when dividing so I
      * can do something about the call to Math.abs.
      * <p>
      * TODO: GET RID OF THIS. Probably very bad modular design.
      */
-    public Word(String command, APart address, IPart index, FPart field) {
+    public Word(String command, APart address, IPart index, FPart field, int counter, HashMap<String, DefinedSymbol> definedSymbols) {
         myBytes = new Byte[5];
-        int addr = address.evaluate();
+        int addr = address.evaluate(counter, definedSymbols);
         mySign = addr >= 0;
         addr = Math.abs(addr);
         myBytes[0] = new Byte(addr / 64);
         myBytes[1] = new Byte(addr % 64);
-        myBytes[2] = new Byte(index.getValue());
-        myBytes[3] = new Byte(field.getValue());
+        myBytes[2] = new Byte(index.getValue(counter, definedSymbols));
+        myBytes[3] = new Byte(field.getValue(counter, definedSymbols));
         myBytes[4] = new Byte(Constants.commands.get(command).getCode());
     }
 
@@ -94,14 +95,14 @@ public class Word {
     // TODO: write a formal constructor javadoc (is that what it is?) comment
     // specifying that null parts of myBytes do not modify anything in
     // setAllBytes (which is actually pretty useful).
-    public Word(int sign, int x, FPart field) {
+    public Word(int sign, int x, FPart field, int counter, HashMap<String, DefinedSymbol> definedSymbols) {
         this(sign, x);
         // Check if field is valid TODO: Maybe make this into a method?
-        int left = field.getLeft();
-        int right = field.getRight();
+        // TODO: Fix
+        int left = field.getLeft(counter, definedSymbols);
+        int right = field.getRight(counter, definedSymbols);
 
-        // TODO: IMO the following code should've been done when the FPart was
-        // created.
+        // TODO: IMO the following code should've been done when the FPart was created.
         if (!(0 <= left && left <= 5) || !(0 <= right && right <= 5) || left > right) {
             throw new IllegalArgumentException("Field value is invalid");
         }
@@ -154,8 +155,7 @@ public class Word {
      * spaces.
      */
     public String toString() {
-        return (mySign ? "+" : "-") + " " + myBytes[0] + " " + myBytes[1] + " " + myBytes[2] + " " + myBytes[3] + " "
-                + myBytes[4];
+        return (mySign ? "+" : "-") + myBytes[0] + myBytes[1] + myBytes[2] + myBytes[3] + myBytes[4];
     }
 
     /**
@@ -195,10 +195,10 @@ public class Word {
 
     public void setByte(int pos, Byte value) {
         // Precondition checking
-        if (!(0 <= pos && pos <= 5)) {
+        if (!(1 <= pos && pos <= 5)) {
             throw new IllegalArgumentException("The given position is invalid.");
         }
-        myBytes[pos] = value;
+        myBytes[pos-1] = value;
         // TODO: which is better.. create a new byte or modify the existing?
     }
 

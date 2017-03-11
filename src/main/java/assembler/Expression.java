@@ -1,10 +1,11 @@
 // TODO: This is like not good.... why is it implementing APart???
-package assembly;
+package assembler;
 
-import assembly.atom.Asterisk;
-import assembly.atom.AtomicExpression;
-import assembly.atom.Number;
-import assembly.symbol.DefinedSymbol;
+import assembler.atom.Asterisk;
+import assembler.atom.AtomicExpression;
+import assembler.atom.Number;
+import assembler.symbol.DefinedSymbol;
+
 import java.util.HashMap;
 
 /**

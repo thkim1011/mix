@@ -35,7 +35,7 @@
 
 	/**
 	 * <b><code>STZ</code> method.</b> This method is equivalent to the action
-	 * of STZ of MIXAL. I initially thought about simply creating a register
+	 * of STZ of MIXAL. I initially thought about simply creating a simulator.register
 	 * stored with 0 and using the STr method, but I figured that would be too
 	 * contrived. I might change my mind though because the code is literally
 	 * the same thing. (12/24/16)

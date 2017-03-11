@@ -1,6 +1,6 @@
-package assembly;
+package assembler;
 
-import assembly.symbol.DefinedSymbol;
+import assembler.symbol.DefinedSymbol;
 import java.util.HashMap;
 
 public interface APart {

@@ -1,4 +1,4 @@
-package test;
+package main;
 
 public class TestByte {
 

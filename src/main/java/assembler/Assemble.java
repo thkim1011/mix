@@ -1,16 +1,16 @@
-package assembly;
+package assembler;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import assembler.symbol.LocalDefinedSymbol;
 import main.Constants;
 import main.Word;
 import main.Byte;
-import assembly.symbol.DefinedSymbol;
-import assembly.symbol.FutureReference;
-import assembly.symbol.LocalSymbol;
-import assembly.symbol.Symbol;
+import assembler.symbol.DefinedSymbol;
+import assembler.symbol.FutureReference;
+import assembler.symbol.Symbol;
 
 /**
  * <b>Assemble class.</b> This implementation of MIX consists of three
@@ -28,9 +28,9 @@ public class Assemble {
     private int myByteSize;
     // Symbols
     private HashMap<String, DefinedSymbol> myDefinedSymbols;
-    private ArrayList<LocalSymbol> myLocalSymbols;
     private ArrayList<FutureReference> myFutureReferences;
-    private ArrayList<Word> myConstants;
+    private ArrayList<FutureReference> myLocalFutureReferences;
+    private ArrayList<LocalDefinedSymbol> myLocalDefinedSymbols;
     // Instructions
     private ArrayList<String> myProgram;
     private ArrayList<String[]> myFormattedProgram;
@@ -41,23 +41,28 @@ public class Assemble {
      * contains the methods to assemble a myProgram written in MIXAL to MIX
      * machine code.
      *
-     * @param filenameIn Name of the file which contains the MIX assembly myProgram.
+     * @param filenameIn Name of the file which contains the MIX assembler myProgram.
      * @throws IOException
      */
     public Assemble(String filenameIn, String filenameOut) throws IOException {
+        Constants.init();
         myCounter = 0;
         myByteSize = 64;
         myDefinedSymbols = new HashMap<String, DefinedSymbol>();
-        myLocalSymbols = new ArrayList<LocalSymbol>();
         myFutureReferences = new ArrayList<FutureReference>();
-        myConstants = new ArrayList<Word>();
+        myLocalDefinedSymbols = new ArrayList<LocalDefinedSymbol>();
+        myLocalFutureReferences = new ArrayList<FutureReference>();
+
         myProgram = new ArrayList<String>();
         myFormattedProgram = new ArrayList<String[]>();
         myAssembled = new Word[4000];
 
+        // Start Counter for Literal Constants
+        Integer constants = 0;
+
         // Instantiate Local Symbols
         for (int i = 0; i <= 9; i++) {
-            myLocalSymbols.add(new LocalSymbol());
+            myDefinedSymbols.put(i + "B", new DefinedSymbol(i + "B", -1));
         }
         // Allot space for myAssembled
         for(int i = 0; i < 4000; i++) {
@@ -88,7 +93,8 @@ public class Assemble {
             myFormattedProgram.add(partitionLine(line));
         }
 
-        for (int i = 0; i < myProgram.size(); i++) {
+
+        for (int i = 0; i < myFormattedProgram.size(); i++) {
             String symbol = myFormattedProgram.get(i)[0];
             String command = myFormattedProgram.get(i)[1];
             String address = myFormattedProgram.get(i)[2];
@@ -96,13 +102,16 @@ public class Assemble {
 
             if (!symbol.equals("")) {
                 // If Local Symbol
+
                 if (symbol.matches("[0-9]H")) {
-                    myLocalSymbols.get(Integer.parseInt(symbol.substring(0, 1))).setCounter(myCounter);
+                    myLocalDefinedSymbols.add(new LocalDefinedSymbol(symbol.substring(0,1) + "F", myCounter));
+                    myDefinedSymbols.put(symbol.substring(0,1) + "B", new DefinedSymbol(symbol.substring(0,1) + "B", myCounter));
                 }
-                // Note that symbol names cannot be 2F or 2B since this causes danger
-                if (symbol.matches("[1-9](B|F)")) {
+                // Note that symbol names cannot be 2B or 2F since this causes danger
+                if (symbol.matches("[0-9](B|F)")) {
                     throw new IllegalArgumentException("You may not use local variables dH or dF as a symbol name.");
                 }
+
                 // Otherwise Defined Symbol
                 else {
                     myDefinedSymbols.put(symbol, new DefinedSymbol(symbol, myCounter));
@@ -144,7 +153,75 @@ public class Assemble {
 
             // Interpret the address section
 
-            assembleMIXAL(myProgram.get(i), myFormattedProgram.get(i), partitionAddress(address, command));
+            // TODO: Reformat code below...
+            String in = myProgram.get(i);
+            String[] linePartition = myFormattedProgram.get(i);
+            String[] addrPartition = partitionAddress(address, command);
+
+            // Get Value of IPART
+            IPart iPart = new IPart(addrPartition[1]);
+            // Get Value of FPart
+            FPart fPart;
+            if (addrPartition[2].equals("")) {
+                fPart = new FPart(Constants.commands.get(linePartition[1]).getField());
+            } else {
+                fPart = new FPart(addrPartition[2]);
+            }
+
+            // Interpret APart -- I should do bug testing for this code
+            APart aPart;
+            String addr = addrPartition[0];
+            if (addr.matches("[A-Z|0-9]+") && !addr.matches("[0-9]+")) { // If it is a normal symbol name
+                // Check the validity of variable name
+                if (!Symbol.isValidSymbolName(addr)) {
+                    throw new IllegalArgumentException("Symbol name is invalid.");
+                }
+                // If the variable is not defined
+
+                boolean isDefined = myDefinedSymbols.get(addr) != null;
+
+                if (!isDefined) {
+                    if(addr.matches("[0-9]F")) {
+                        aPart = new FutureReference(addr, myCounter, false);
+                        myLocalFutureReferences.add((FutureReference) aPart);
+                    }
+                    else {
+                        aPart = new FutureReference(addr, myCounter, false);
+                        myFutureReferences.add((FutureReference) aPart);
+                    }
+                }
+                else {
+                    aPart = new Expression(addr); // TODO: bad code... need to fix
+                }
+
+            }
+            else {
+                // IF Literal Constant...
+                if (addr.matches("=.+=")) {
+                    // TODO: add checking that END exists and is last line
+                    String[] partition = new String[3];
+                    partition[0] = "_" + constants;
+                    partition[1] = "CON";
+                    partition[2] = addr.substring(1, addr.length() - 1);
+                    myFormattedProgram.add(myFormattedProgram.size() - 1, partition);
+                    constants ++;
+                    addr = partition[0];
+                    aPart = new FutureReference(addr, myCounter, true);
+                    myFutureReferences.add((FutureReference) aPart);
+                }
+                else {
+                    if(addr.length() == 0) {
+                        addr = "0";
+                    }
+                    aPart = new Expression(addr);
+                }
+
+                // TODO: it seems to be that operator with empty string do not function well.
+            }
+
+            // Create Instruction and add to memory
+            myAssembled[myCounter] = new Word(linePartition[1], aPart, iPart, fPart, myCounter, myDefinedSymbols);
+
             myCounter++;
         }
 
@@ -158,61 +235,28 @@ public class Assemble {
             myAssembled[position].setByte(2, new Byte(value%64));
         }
 
+        // Deal with all the Local Future References
+        for(int i = 0; i < myLocalFutureReferences.size(); i++) {
+            int position = myLocalFutureReferences.get(i).getPosition();
+            String name = myFutureReferences.get(i).getName();
+            //TODO: The following code is quite inefficient.
+            //TODO: Create a better design to this program
+            for(int j = 0; j < myLocalDefinedSymbols.size(); j++) {
+                LocalDefinedSymbol d = myLocalDefinedSymbols.get(j);
+                if(!(d.getValue() < position) && d.getName() == name) {
+                    myAssembled[position].setSign(true);
+                    myAssembled[position].setByte(1, new Byte(d.getValue()/64));
+                    myAssembled[position].setByte(2,new Byte(d.getValue()%64));
+                    break;
+                }
+            }
+        }
+
         for(int i = 0; i < 4000; i++) {
             fileOut.println(myAssembled[i].toString());
         }
-    }
-
-
-    private void assembleMIXAL(String in, String[] linePartition, String[] addrPartition) {
-        // Get Value of IPART
-        IPart iPart = new IPart(addrPartition[1]);
-        // Get Value of FPart
-        FPart fPart;
-        if (addrPartition[2].equals("")) {
-            fPart = new FPart(Constants.commands.get(linePartition[1]).getField());
-        } else {
-            fPart = new FPart(addrPartition[2]);
-        }
-
-        // Interpret APart -- I should do bug testing for this code
-        APart aPart;
-        String addr = addrPartition[0];
-        if (!addr.matches("[^\\+\\-\\*/:]*=") && addr.matches(".*[A-Z].*")) { // i.e.
-            // has
-            // no
-            // operations
-            // and
-            // is
-            // not
-            // literal
-            // Check the validity of variable name
-            if (!Symbol.isValidSymbolName(addr)) {
-                throw new IllegalArgumentException("Symbol name is invalid.");
-            }
-            // If the variable is not defined
-
-            boolean isDefined = myDefinedSymbols.get(addr) != null;
-
-            if (!isDefined) {
-                aPart = new FutureReference(addr, myCounter);
-            }
-			/*
-			 * if(addr.charAt(0) == '=') { aPart = new LiteralConstant(addr); }
-			 */
-            else {
-                aPart = new Expression(addr); // TODO: bad code... need to fix
-            }
-
-        } else {
-            aPart = new Expression(addr);
-            // TODO: it seems to be that operator with empty string do not function well.
-        }
-
-        // Create Instruction and add to memory
-        myAssembled[myCounter] = new Word(linePartition[1], aPart, iPart, fPart, myCounter, myDefinedSymbols);
-
-
+        fileIn.close();
+        fileOut.close();
     }
 
     /**

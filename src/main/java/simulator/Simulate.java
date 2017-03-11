@@ -1,7 +1,7 @@
 package simulator;
 
-import register.JumpRegister;
-import register.Register;
+import simulator.register.JumpRegister;
+import simulator.register.Register;
 import main.Word;
 
 /**
@@ -13,7 +13,7 @@ import main.Word;
  * 
  * The structure of the class has some points that should be explained. The
  * first nine instance variables consist of the registers. Each are of the type
- * Register, and each are a Register object, except for the jump register, which
+ * Register, and each are a Register object, except for the jump simulator.register, which
  * uses a subclass called JumpRegister.
  * 
  * The next four instance variables consist of the memory, the overflow toggle,
@@ -92,7 +92,7 @@ public class Simulate {
 			myReg6.setRegister(value);
 		}
 		else {
-			throw new IllegalArgumentException("Your register name is invalid."); //TODO: Try to create a standard error throwing convention...
+			throw new IllegalArgumentException("Your simulator.register name is invalid."); //TODO: Try to create a standard error throwing convention...
 		}
 	}
 }
