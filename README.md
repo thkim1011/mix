@@ -1,23 +1,24 @@
 # MIX Simulator and Assembler 
 [![Build Status](https://travis-ci.org/thkim1011/MIX.svg?branch=master)](https://travis-ci.org/thkim1011/MIX)
 ## About
-This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science) In this book, the language that is used is MIX Assembly Language, or MIXAL, which is used for the hypothetical computer called MIX (exciting right?). Well, I finally finished the large section on mathematical preliminaries and reached the section introducing MIX and MIXAL, but... I had no access to the internet, and I had no idea how an Assembly language worked, so I decided to create... this! 
+This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science). This book, contrary to many other books, use the hypothetical computer called MIX and the assembly language MIXAL associated with it. Upon reading how this computer works in detail, I was pretty amazed because I could finally conceive how a computer works. As a result, I decided to create a simulator and assembler for MIX. This program will provide tools to assemble and load MIXAL programs onto a MIX computer and run these programs. 
 
 ## Status
-Currently, the assembler works (as in if you have a file with no bugs, it might work), but I have not made the simulator yet. I'm currently in the process of catching errors in the assembler process.
+So far, the assembly process seems to be working very well. I've recently incorporated unit testing into this project, and had to significantly restructure it as a result (I'm very new to the idea of large software), so I was delayed, but now I can get on to the simulator. I'll probably have to run more tests in order to catch all the bugs within the assembly process but it should be mostly good. 
 
 ## Usage
-In the terminal or command prompt, type `java assemble FILENAME`.
-Once I make the simulator, you should be able to run `java MIX FILENAME` to automatically assemble the program and load the simulator. I'll eventually learn how to make a batch file and make this more convenient. 
+As of the time or writing, this repository only contains the source. To build the project, use the tradition gradle command `gradle build`. Then in the terminal, type the command `java -cp /path/to/MIX.jar MIX /path/to/MIXAL/file.mixal`. It probably helps to make a batch file if you're using Windows.
 
 ## To do
 * Make a simulator.
 * ~~Learn how to use git properly.~~
-* Learn how to use Gradle
-* Learn how to use Travis CI
+* ~~Learn how to use Gradle~~
+* ~~Learn how to use Travis CI~~
+* Work on the unit testing parts.
+* Separate the validation process from the assembling process.
 
 ## Disclaimer
-When I first started this, I did this off of only knowledge of programming and absolutely no knowledge of assemblers. This may be very unconventionally programmed (e.g. are you supposed to check for errors before or as you assemble? I went with the latter).
+When I first started this, I did this off of only knowledge of programming and absolutely no knowledge of assemblers. This may be very unconventionally programmed.
 
 ## LOL
 I'm honestly surprised that I even came this far.
