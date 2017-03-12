@@ -1,10 +1,16 @@
 // TODO: This is like not good.... why is it implementing APart???
-package assembly;
+package assembler;
 
-import assembly.atom.Asterisk;
-import assembly.atom.AtomicExpression;
-import assembly.atom.Number;
+import assembler.atom.Asterisk;
+import assembler.atom.AtomicExpression;
+import assembler.atom.Number;
+import assembler.symbol.DefinedSymbol;
 
+import java.util.HashMap;
+
+/**
+ * <b>Expression class.</b>
+ */
 public class Expression implements APart {
 
 	// Instance Variables
@@ -50,6 +56,7 @@ public class Expression implements APart {
 		String atom = exp.substring(i, j);
 
 		// Test if number
+		// TODO: Replace this with REGEX
 		boolean isNumber = true;
 		for (int k = 0; k < atom.length(); k++) {
 			if (!(isNumber(atom.charAt(k)))) {
@@ -71,18 +78,7 @@ public class Expression implements APart {
 		}
 		// If variable
 		else {
-			boolean isAssigned = false;
-			for (int k = 0; k < Assemble.dsymbols.size(); k++) {
-				if (Assemble.dsymbols.get(k).getName().equals(atom)) {
-					value = Assemble.dsymbols.get(k);
-					isAssigned = true;
-					break;
-				}
-			}
-			if (!isAssigned) {
-				throw new IllegalArgumentException(
-					"The APart of the line cannot use operators if it is a future reference.");
-			}
+			value = new DefinedSymbol(atom, -1);
 		}
 
 		// If at the end of string, then there is no op or node
@@ -120,11 +116,11 @@ public class Expression implements APart {
 				|| c == '9';
 	}
 
-	public int evaluate() {
+	public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
 		if (rNode == null) {
-			return value.evaluate();
+			return sign * value.evaluate(counter, definedSymbols);
 		} else {
-			return op.evaluate(sign * value.evaluate(), rNode.evaluate());
+			return op.evaluate(sign * value.evaluate(counter, definedSymbols), rNode.evaluate(counter, definedSymbols));
 		}
 	}
 

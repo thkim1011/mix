@@ -50,7 +50,11 @@ final public class Byte implements Comparable<Byte>{
 	 * future).
 	 */
 	public String toString() {
-		return Integer.toString(myByte);
+		String a = Integer.toString(myByte);
+		if(a.length() == 1) {
+			a = "0" + a;
+		}
+		return a;
 	}
 	
 	/**

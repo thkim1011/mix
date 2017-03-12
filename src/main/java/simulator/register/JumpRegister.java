@@ -1,4 +1,4 @@
-package register;
+package simulator.register;
 
 import main.Word;
 
@@ -20,8 +20,8 @@ public class JumpRegister extends Register {
 
 	/**
 	 * <b>setRegister method</b> This is where this subclass is needed. In a
-	 * jump register, the sign cannot be set, so the method first sets the sign
-	 * of the incoming word to true, and then modifies the register.
+	 * jump simulator.register, the sign cannot be set, so the method first sets the sign
+	 * of the incoming word to true, and then modifies the simulator.register.
 	 */
 	public void setRegister(Word in) {
 		in.setSign(true);
