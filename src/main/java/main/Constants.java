@@ -5,7 +5,8 @@ import misc.Pair;
 
 public class Constants {
 	final public static HashMap<String, Pair> commands = new HashMap<String, Pair>();
-	
+	final public static HashMap<Character, Integer> characterCode = new HashMap<Character, Integer>();
+
 	public static void init() {
 		// No Operation
 		commands.put("NOP", new Pair(0,0));
@@ -176,6 +177,64 @@ public class Constants {
 		commands.put("CMP5", new Pair(61, 5));
 		commands.put("CMP6", new Pair(62, 5));
 		commands.put("CMPX", new Pair(63, 5));
+
+		// Character Code
+		characterCode.put(' ' , 0);
+		characterCode.put('A' , 1);
+		characterCode.put('B' , 2);
+		characterCode.put('C' , 3);
+		characterCode.put('D' , 4);
+		characterCode.put('E' , 5);
+		characterCode.put('F' , 6);
+		characterCode.put('G' , 7);
+		characterCode.put('H' , 8);
+		characterCode.put('I' , 9);
+
+		characterCode.put('J' , 11);
+		characterCode.put('K' , 12);
+		characterCode.put('L' , 13);
+		characterCode.put('M' , 14);
+		characterCode.put('N' , 15);
+		characterCode.put('O' , 16);
+		characterCode.put('P' , 17);
+		characterCode.put('Q' , 18);
+		characterCode.put('R' , 19);
+
+
+		characterCode.put('S' , 22);
+		characterCode.put('T' , 23);
+		characterCode.put('U' , 24);
+		characterCode.put('V' , 25);
+		characterCode.put('W' , 26);
+		characterCode.put('X' , 27);
+		characterCode.put('Y' , 28);
+		characterCode.put('Z' , 29);
+		characterCode.put('0' , 30);
+		characterCode.put('1' , 31);
+		characterCode.put('2' , 32);
+		characterCode.put('3' , 33);
+		characterCode.put('4' , 34);
+		characterCode.put('5' , 35);
+		characterCode.put('6' , 36);
+		characterCode.put('7' , 37);
+		characterCode.put('8' , 38);
+		characterCode.put('9' , 39);
+		characterCode.put('.' , 40);
+		characterCode.put(',' , 41);
+		characterCode.put('(' , 42);
+		characterCode.put(')' , 43);
+		characterCode.put('+' , 44);
+		characterCode.put('-' , 45);
+		characterCode.put('*' , 46);
+		characterCode.put('/' , 47);
+		characterCode.put('=' , 48);
+		characterCode.put('$' , 49);
+		characterCode.put('<' , 50);
+		characterCode.put('>' , 51);
+		characterCode.put('@' , 52);
+		characterCode.put(';' , 53);
+		characterCode.put(':' , 54);
+		characterCode.put('\'', 55);
 	}
 	
 }

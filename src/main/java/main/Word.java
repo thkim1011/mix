@@ -79,12 +79,11 @@ public class Word {
      * TODO: Update this comment and the code is ugly :(
      */
     public Word(int sign, int x) {
-        if (!(-1073741823 <= x && x < 1073741823)) {
+        if (!(0 <= x && x < 1073741823)) {
             throw new IllegalArgumentException("x must be greater than -64^5 and less than 64^5");
         }
         myBytes = new Byte[5];
-        mySign = x >= 0;
-        x = Math.abs(x);
+        mySign = sign >= 0;
         for (int i = 4; i >= 0; i--) {
             myBytes[i] = new Byte(x % 64);
             x = x / 64;

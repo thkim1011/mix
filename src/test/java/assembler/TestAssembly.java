@@ -10,28 +10,36 @@ import org.junit.Test;
 
 public class TestAssembly {
 	@Test
-	public void TestAllFiles() throws IOException {
-	    String[] fileName = {
-	            "Maximum",
+    public void TestAllFiles() throws IOException{
+        String[] fileName = {
+                "Maximum",
                 "TableOfPrimes"
         };
 
-		String[] fileIn = new String[fileName.length];
-		String[] fileOut = new String[fileName.length];
-		String[] fileExpected = new String[fileName.length];
-		boolean[] success = new boolean[fileName.length];
 
-		for(int i = 0; i < fileName.length; i++) {
-		    fileIn[i] = "src/test/mixSource/" + fileName[i] + ".mixal";
-		    fileOut[i] =  "src/test/mixSource/" + fileName[i] + ".mix";
-		    fileExpected[i] =  "src/test/mixSource/" + fileName[i] + "Expected.mix";
+        String[] fileIn = new String[fileName.length];
+        String[] fileOut = new String[fileName.length];
+        String[] fileExpected = new String[fileName.length];
+        boolean[] success = new boolean[fileName.length];
+
+
+        for(int i = 0; i < fileName.length; i++) {
+            fileIn[i] = "src/test/mixSource/" + fileName[i] + ".mixal";
+            fileOut[i] =  "src/test/mixSource/" + fileName[i] + ".mix";
+            fileExpected[i] =  "src/test/mixSource/" + fileName[i] + "Expected.mix";
         }
 
         for(int i = 0; i < fileName.length; i++) {
-		    System.out.println("Test " + i + ": " + fileName[i]);
-            Assemble assembler = new Assemble(fileIn[i], fileOut[i]);
-            BufferedReader Maximum1 = new BufferedReader(new FileReader(fileOut[i]));
-            BufferedReader Maximum2 = new BufferedReader(new FileReader(fileExpected[i]));
+            TestFile(fileIn[i], fileOut[i], fileExpected[i]);
+        }
+    }
+
+	public void TestFile(String fileIn, String fileOut, String fileExpected) throws IOException {
+
+		    System.out.println(fileIn);
+            Assemble assembler = new Assemble(fileIn, fileOut);
+            BufferedReader Maximum1 = new BufferedReader(new FileReader(fileOut));
+            BufferedReader Maximum2 = new BufferedReader(new FileReader(fileExpected));
             boolean isWorking = true;
             int counter = 0;
             while(true) {
@@ -43,10 +51,8 @@ public class TestAssembly {
 
                 if(!line1.equals(line2)) {
                     System.out.println("ERROR: (Line " + counter + ") Assembly.main gave \"" + line1 + "\", but \"" + line2 + "\" was expected");
-                    isWorking = false;
                 }
                 counter++;
             }
         }
-	}
 }

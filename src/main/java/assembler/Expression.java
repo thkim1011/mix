@@ -56,6 +56,7 @@ public class Expression implements APart {
 		String atom = exp.substring(i, j);
 
 		// Test if number
+		// TODO: Replace this with REGEX
 		boolean isNumber = true;
 		for (int k = 0; k < atom.length(); k++) {
 			if (!(isNumber(atom.charAt(k)))) {
@@ -117,7 +118,7 @@ public class Expression implements APart {
 
 	public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
 		if (rNode == null) {
-			return value.evaluate(counter, definedSymbols);
+			return sign * value.evaluate(counter, definedSymbols);
 		} else {
 			return op.evaluate(sign * value.evaluate(counter, definedSymbols), rNode.evaluate(counter, definedSymbols));
 		}

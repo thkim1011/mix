@@ -136,8 +136,29 @@ public class Assemble {
                 continue;
             }
             if (command.equals("ALF")) {
-                WValue addr = new WValue(address);
-                //TODO: Finish ALF
+                // TODO: Incorporate this with the other stuff when I get time
+                String line = myProgram.get(i);
+                int position = line.indexOf("ALF") + 3;
+                String word = line.substring(position);
+                if(word.length() < 2) {
+                    myAssembled[myCounter] = new Word();
+                }
+                else {
+                    // The format should be as explained in TAOCP
+                    int start;
+                    if (word.charAt(1) == ' ') {
+                        start = 2;
+                    }
+                    else {
+                        start = 1;
+                    }
+                    Byte[] b = new Byte[5];
+                    for(int j = start; j < word.length() && j < start + 5; j++) {
+                        b[j - start] = new Byte(Constants.characterCode.get(word.charAt(j)));
+                    }
+                    myAssembled[myCounter] = new Word(true, b);
+                    //TODO: Finish ALF
+                }
                 myCounter++;
                 continue;
             }
@@ -238,12 +259,12 @@ public class Assemble {
         // Deal with all the Local Future References
         for(int i = 0; i < myLocalFutureReferences.size(); i++) {
             int position = myLocalFutureReferences.get(i).getPosition();
-            String name = myFutureReferences.get(i).getName();
+            String name = myLocalFutureReferences.get(i).getName();
             //TODO: The following code is quite inefficient.
             //TODO: Create a better design to this program
             for(int j = 0; j < myLocalDefinedSymbols.size(); j++) {
                 LocalDefinedSymbol d = myLocalDefinedSymbols.get(j);
-                if(!(d.getValue() < position) && d.getName() == name) {
+                if(!(d.getValue() < position) && d.getName().equals(name)) {
                     myAssembled[position].setSign(true);
                     myAssembled[position].setByte(1, new Byte(d.getValue()/64));
                     myAssembled[position].setByte(2,new Byte(d.getValue()%64));
