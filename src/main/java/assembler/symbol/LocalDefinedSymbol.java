@@ -14,7 +14,7 @@ public class LocalDefinedSymbol implements Symbol {
 
     public String getName() {
         return myName;
-    }
+}
 
     public int getValue() {
         return myValue;

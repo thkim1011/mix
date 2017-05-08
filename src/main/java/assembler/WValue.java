@@ -60,18 +60,18 @@ public class WValue {
         return nextNode;
     }
    
-    public Word evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
-        int i = this.myExp.evaluate(counter, definedSymbols);
+    public Word evaluate(Assemble assembler) {
+        int i = this.myExp.evaluate(assembler);
         int sign = i >= 0 ? 1 : -1;
         Word w;
         if(myField == null) {
         	w = new Word(sign, Math.abs(i));
         }
         else {
-        	w = new Word(sign, Math.abs(i), myField, counter, definedSymbols);
+        	w = new Word(sign, Math.abs(i), myField, assembler);
         }
         if(nextNode != null) {
-            w.setAllBytes(nextNode.evaluate(counter, definedSymbols));
+            w.setAllBytes(nextNode.evaluate(assembler));
         }
         return w;
     }

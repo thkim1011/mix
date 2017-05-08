@@ -8,7 +8,7 @@ import main.Byte;
  * idea of a simulator.register.
  * 
  * The purpose for creating such an interface is for simplification of the
- * loading operators and storing operators, because, without it, at least one
+ * loading operator and storing operator, because, without it, at least one
  * method is required for every single command that could honestly be classified
  * into one method. I figured that this would be VERY bad for debugging in the
  * future.

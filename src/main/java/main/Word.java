@@ -1,6 +1,7 @@
 package main;
 
 import assembler.APart;
+import assembler.Assemble;
 import assembler.FPart;
 import assembler.IPart;
 import assembler.symbol.DefinedSymbol;
@@ -45,15 +46,15 @@ public class Word {
      * <p>
      * TODO: GET RID OF THIS. Probably very bad modular design.
      */
-    public Word(String command, APart address, IPart index, FPart field, int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+    public Word(String command, APart address, IPart index, FPart field, Assemble assembler) {
         myBytes = new Byte[5];
-        int addr = address.evaluate(counter, definedSymbols);
+        int addr = address.evaluate(assembler);
         mySign = addr >= 0;
         addr = Math.abs(addr);
         myBytes[0] = new Byte(addr / 64);
         myBytes[1] = new Byte(addr % 64);
-        myBytes[2] = new Byte(index.getValue(counter, definedSymbols));
-        myBytes[3] = new Byte(field.getValue(counter, definedSymbols));
+        myBytes[2] = new Byte(index.getValue(assembler));
+        myBytes[3] = new Byte(field.getValue(assembler));
         myBytes[4] = new Byte(Constants.commands.get(command).getCode());
     }
 
@@ -94,12 +95,12 @@ public class Word {
     // TODO: write a formal constructor javadoc (is that what it is?) comment
     // specifying that null parts of myBytes do not modify anything in
     // setAllBytes (which is actually pretty useful).
-    public Word(int sign, int x, FPart field, int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+    public Word(int sign, int x, FPart field, Assemble assembler) {
         this(sign, x);
         // Check if field is valid TODO: Maybe make this into a method?
         // TODO: Fix
-        int left = field.getLeft(counter, definedSymbols);
-        int right = field.getRight(counter, definedSymbols);
+        int left = field.getLeft(assembler);
+        int right = field.getRight(assembler);
 
         // TODO: IMO the following code should've been done when the FPart was created.
         if (!(0 <= left && left <= 5) || !(0 <= right && right <= 5) || left > right) {
@@ -148,13 +149,35 @@ public class Word {
     }
 
     /**
+     * Copy constructor
+     */
+    public Word(Word w) {
+        this(w.getSign(), w.getByte(1), w.getByte(2), w.getByte(3), w.getByte(4), w.getByte(5));
+    }
+
+    /**
      * Implementation of toString() from Object
      *
      * @return A String consisting of the sign and the five bytes separated by
      * spaces.
      */
     public String toString() {
-        return (mySign ? "+" : "-") + myBytes[0] + myBytes[1] + myBytes[2] + myBytes[3] + myBytes[4];
+        return (mySign ? "+" : "-")
+                + " " + myBytes[0]
+                + " " + myBytes[1]
+                + " " + myBytes[2]
+                + " " + myBytes[3]
+                + " " + myBytes[4];
+    }
+
+    public boolean equals(Object other) {
+        boolean isEqual = true;
+
+        isEqual = isEqual && this.mySign == ((Word) other).mySign;
+        for (int i = 0; i < 4; i++) {
+            isEqual = isEqual && this.myBytes[i].equals(((Word) other).myBytes[i]);
+        }
+        return isEqual;
     }
 
     /**

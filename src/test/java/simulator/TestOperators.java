@@ -8,7 +8,7 @@ public class TestOperators {
 	@Test
 	public void TestLDr() {
 		System.out.println("***************************");
-		System.out.println("* Testing Load Operators  *");
+		System.out.println("* Testing Loader Operators  *");
 		System.out.println("***************************");
 		
 		System.out.println("\nI. Testing LDA");

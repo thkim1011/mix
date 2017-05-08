@@ -78,6 +78,7 @@ public class Expression implements APart {
 		}
 		// If variable
 		else {
+
 			value = new DefinedSymbol(atom, -1);
 		}
 
@@ -116,11 +117,11 @@ public class Expression implements APart {
 				|| c == '9';
 	}
 
-	public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+	public int evaluate(Assemble assembler) {
 		if (rNode == null) {
-			return sign * value.evaluate(counter, definedSymbols);
+			return sign * value.evaluate(assembler);
 		} else {
-			return op.evaluate(sign * value.evaluate(counter, definedSymbols), rNode.evaluate(counter, definedSymbols));
+			return op.evaluate(sign * value.evaluate(assembler), rNode.evaluate(assembler));
 		}
 	}
 

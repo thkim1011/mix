@@ -29,7 +29,7 @@ public class Constants {
 		commands.put("SRAX", new Pair(6,3));
 		commands.put("SLC", new Pair(6,4));
 		commands.put("SRC", new Pair(6,5));
-		// Load Operators
+		// Loader Operators
 		commands.put("LDA", new Pair(8,5));
 		commands.put("LD1", new Pair(9,5));
 		commands.put("LD2", new Pair(10,5));

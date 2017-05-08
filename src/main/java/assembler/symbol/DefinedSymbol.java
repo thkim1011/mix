@@ -1,5 +1,6 @@
 package assembler.symbol;
 
+import assembler.Assemble;
 import assembler.atom.AtomicExpression;
 
 import java.util.HashMap;
@@ -17,12 +18,12 @@ public class DefinedSymbol implements Symbol, AtomicExpression, Comparable<Defin
         return myName;
     }
 
-    public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+    public int evaluate(Assemble assembler) {
         if(myValue != -1) {
             return myValue;
         }
         else {
-            return definedSymbols.get(myName).myValue;
+            return assembler.getDefinedSymbols(myName);
         }
     }
 
@@ -38,5 +39,9 @@ public class DefinedSymbol implements Symbol, AtomicExpression, Comparable<Defin
     // Note that this should only be called in the case that EQU is found.
     public void setValue(int value) {
         myValue = value;
+    }
+
+    public int getValue() {
+        return myValue;
     }
 }

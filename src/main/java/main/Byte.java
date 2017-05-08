@@ -56,6 +56,10 @@ final public class Byte implements Comparable<Byte>{
 		}
 		return a;
 	}
+
+	public boolean equals(Object other) {
+		return this.myByte == ((Byte) other).myByte;
+	}
 	
 	/**
 	 * <b>compareTo method.</b> This method is required by Comparable. 

@@ -1,6 +1,7 @@
 package assembler.symbol;
 
 import assembler.APart;
+import assembler.Assemble;
 
 import java.util.HashMap;
 
@@ -19,7 +20,7 @@ public class FutureReference implements Symbol, APart {
         myPosition = position;
     }
 
-    public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+    public int evaluate(Assemble assembler) {
         return myValue;
     }
     

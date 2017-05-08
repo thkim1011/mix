@@ -1,5 +1,6 @@
 package assembler.atom;
 
+import assembler.Assemble;
 import assembler.symbol.DefinedSymbol;
 
 import java.util.HashMap;
@@ -10,7 +11,7 @@ public class Number implements AtomicExpression {
     public Number(int number) {
         myNumber = number;
     }
-    public int evaluate(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+    public int evaluate(Assemble assembler) {
         return myNumber;
     }
 

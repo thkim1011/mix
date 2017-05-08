@@ -1,5 +1,6 @@
 package simulator;
 
+import assembler.Assemble;
 import simulator.register.JumpRegister;
 import simulator.register.Register;
 import main.Word;
@@ -65,7 +66,78 @@ public class Simulate {
 		// Current Instruction
 		myCurrentInst = 0;
 	}
-	
+
+	public void run(Assemble assembler) {
+
+		// Get Program
+        for(int i = 0; i < 4000; i++) {
+            myMemory[i] = assembler.getAssembled(i);
+        }
+
+        // Construct Operators
+        Loader loader = new Loader();
+        Store storer = new Store();
+
+
+        // Get Current Instruction
+        myCurrentInst = assembler.getStart();
+
+        while (true) {
+            Word inst = myMemory[myCurrentInst];
+
+            // Construct Address
+            int address = (inst.getSign() ? 1 : -1 )
+                    * (inst.getByte(1).getValue()
+                    + inst.getByte(2).getValue())
+                    + getRegister("I" + inst.getByte(3)).getValue();
+
+            // Get Field
+            int field = inst.getByte(4).getValue();
+
+            // Get Command
+            int command = inst.getByte(5).getValue();
+
+            // Casework on Command
+            if (command == 0) { // NOP
+                continue;
+            }
+            else if (1 <= command && command <= 4) { // ADD, SUB, MUL, DIV
+
+            }
+            else if (command == 5) { // NUM, CHAR, HLT
+
+            }
+            else if (command == 6) { // SLA, SRA, SLAX, SRAX, SLC, SRC
+
+            }
+            else if (command == 7) { // MOVE
+            }
+            else if (8 <= command && command <= 23) { // LOAD
+                loader.load(address, field, command, this);
+            }
+            else if (24 <= command && command <= 33) { // STORE
+            }
+            else if (34 <= command && command <= 38) {
+
+            }
+            else if (39 <= command && command <= 47) {
+
+            }
+            else if (48 <= command && command <= 55) {
+
+            }
+            else if (56 <= command && command <= 63) {
+
+            }
+            else {
+                throw new IllegalArgumentException("Command nonexistent");
+            }
+        }
+
+
+    }
+
+
 	public void setRegister(String name, Word value) {
 		if(name.equals("A")) {
 			myRegA.setRegister(value);
@@ -95,4 +167,39 @@ public class Simulate {
 			throw new IllegalArgumentException("Your simulator.register name is invalid."); //TODO: Try to create a standard error throwing convention...
 		}
 	}
+
+	public Word getRegister(String name) {
+	    if (name.equals("A")) {
+	        return myRegA.getWord();
+        }
+        else if (name.equals("X")) {
+	        return myRegX.getWord();
+        }
+        else if(name.equals("I1")) {
+	        return myReg1.getWord();
+        }
+        else if(name.equals("I2")) {
+	        return myReg2.getWord();
+        }
+        else if(name.equals("I3")) {
+	        return myReg3.getWord();
+        }
+        else if(name.equals("I4")) {
+            return myReg3.getWord();
+        }
+        else if(name.equals("I5")) {
+            return myReg3.getWord();
+        }
+        else if(name.equals("I6")) {
+            return myReg3.getWord();
+        }
+        else {
+	        throw new IllegalArgumentException("Your register name is inalid");
+        }
+	}
+
+	public Word getWord(int index) {
+	    return myMemory[index];
+    }
+
 }

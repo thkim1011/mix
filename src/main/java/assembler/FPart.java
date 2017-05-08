@@ -21,14 +21,14 @@ public class FPart {
         myField = new Expression(Integer.toString(value));
     }
 
-    public int getLeft(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
+    public int getLeft(Assemble assembler) {
 
-        return myField.evaluate(counter, definedSymbols) / 8;
+        return myField.evaluate(assembler) / 8;
     }
-    public int getRight(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
-        return myField.evaluate(counter, definedSymbols) % 8;
+    public int getRight(Assemble assembler) {
+        return myField.evaluate(assembler) % 8;
     }
-    public int getValue(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
-    	return myField.evaluate(counter, definedSymbols);
+    public int getValue(Assemble assembler) {
+    	return myField.evaluate(assembler);
     }
 }

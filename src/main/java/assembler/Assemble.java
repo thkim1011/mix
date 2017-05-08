@@ -35,6 +35,8 @@ public class Assemble {
     private ArrayList<String> myProgram;
     private ArrayList<String[]> myFormattedProgram;
     private Word[] myAssembled;
+    // Start
+    private int myStart;
 
     /**
      * The Assemble constructor creates an instance of the Assemble class which
@@ -121,17 +123,17 @@ public class Assemble {
             // Process MIX commands
             if (command.equals("ORIG")) {
                 WValue addr = new WValue(address);
-                myCounter = addr.evaluate(myCounter, myDefinedSymbols).getValue();
+                myCounter = addr.evaluate(this).getValue();
                 continue;
             }
             if (command.equals("EQU")) {
                 WValue addr = new WValue(address);
-                myDefinedSymbols.get(symbol).setValue(addr.evaluate(myCounter, myDefinedSymbols).getValue());
+                myDefinedSymbols.get(symbol).setValue(addr.evaluate(this).getValue());
                 continue;
             }
             if (command.equals("CON")) {
                 WValue addr = new WValue(address);
-                myAssembled[myCounter] = addr.evaluate(myCounter, myDefinedSymbols);
+                myAssembled[myCounter] = addr.evaluate(this);
                 myCounter++;
                 continue;
             }
@@ -164,7 +166,7 @@ public class Assemble {
             }
             if (command.equals("END")) {
                 WValue addr = new WValue(address);
-                //TODO: FINISH END
+                myStart = addr.evaluate(this).getValue();
                 continue;
             }
 
@@ -241,7 +243,7 @@ public class Assemble {
             }
 
             // Create Instruction and add to memory
-            myAssembled[myCounter] = new Word(linePartition[1], aPart, iPart, fPart, myCounter, myDefinedSymbols);
+            myAssembled[myCounter] = new Word(linePartition[1], aPart, iPart, fPart, this);
 
             myCounter++;
         }
@@ -250,7 +252,7 @@ public class Assemble {
         for(int i =0 ; i < myFutureReferences.size(); i++) {
             int position = myFutureReferences.get(i).getPosition();
             String name = myFutureReferences.get(i).getName();
-            int value = myDefinedSymbols.get(name).evaluate(myCounter, myDefinedSymbols);
+            int value = myDefinedSymbols.get(name).evaluate(this);
             myAssembled[position].setSign(true);
             myAssembled[position].setByte(1, new Byte(value/64));
             myAssembled[position].setByte(2, new Byte(value%64));
@@ -278,6 +280,14 @@ public class Assemble {
         }
         fileIn.close();
         fileOut.close();
+    }
+
+
+    /**
+     * Returns an array consisting of the assembled program
+     */
+    public Word getAssembled(int index) {
+        return new Word(myAssembled[index]);
     }
 
     /**
@@ -348,5 +358,18 @@ public class Assemble {
         }
         line.delete(0, j);
         return first;
+    }
+
+    // A Bunch of Getters
+    public int getCounter() {
+        return myCounter;
+    }
+
+    public int getDefinedSymbols(String name) {
+        return myDefinedSymbols.get(name).getValue();
+    }
+
+    public int getStart() {
+        return myStart;
     }
 }

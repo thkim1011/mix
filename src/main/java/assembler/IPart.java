@@ -25,7 +25,7 @@ public class IPart {
     	}
     }
     
-    public int getValue(int counter, HashMap<String, DefinedSymbol> definedSymbols) {
-    	return myIndex.evaluate(counter, definedSymbols);
+    public int getValue(Assemble assembler) {
+    	return myIndex.evaluate(assembler);
     }
 }
