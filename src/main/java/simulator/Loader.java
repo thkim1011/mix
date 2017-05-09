@@ -12,20 +12,28 @@ public class Loader {
         switch(command) {
             case 8: // LDA
                 simulator.setRegister("A", partial);
+                break;
             case 9: // LD1
                 simulator.setRegister("I1", partial);
+            break;
             case 10: // LD2
                 simulator.setRegister("I2", partial);
+            break;
             case 11: // LD3
                 simulator.setRegister("I3", partial);
+            break;
             case 12: // LD4
                 simulator.setRegister("I4", partial);
+            break;
             case 13: // LD5
                 simulator.setRegister("I5", partial);
+            break;
             case 14: // LD6
                 simulator.setRegister("I6", partial);
+            break;
             case 15: // LDX
                 simulator.setRegister("X", partial);
+            break;
             default:
                 throw new IllegalArgumentException("LOAD: Command must be between 8 and 15.");
 

@@ -12,8 +12,7 @@ public class TestAssembly {
 	@Test
     public void TestAllFiles() throws IOException{
         String[] fileName = {
-                "Maximum",
-                "TableOfPrimes"
+                "testprogram"
         };
 
 

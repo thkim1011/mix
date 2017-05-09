@@ -2,10 +2,8 @@
 * A WValue is an expression followed by an F-part or a WValue followed by one. 
 */
 package assembler;
-import assembler.symbol.DefinedSymbol;
+import assembler.expression.Expression;
 import main.Word;
-
-import java.util.HashMap;
 
 public class WValue {
     private Expression myExp;

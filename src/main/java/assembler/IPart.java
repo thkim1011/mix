@@ -1,8 +1,6 @@
 package assembler;
 
-import assembler.symbol.DefinedSymbol;
-
-import java.util.HashMap;
+import assembler.expression.Expression;
 
 public class IPart {
 	private Expression myIndex;

@@ -77,19 +77,29 @@ public class Simulate {
         // Construct Operators
         Loader loader = new Loader();
         Store storer = new Store();
-
+		IO io = new IO();
 
         // Get Current Instruction
         myCurrentInst = assembler.getStart();
 
         while (true) {
             Word inst = myMemory[myCurrentInst];
-
+			myCurrentInst++;
             // Construct Address
-            int address = (inst.getSign() ? 1 : -1 )
-                    * (inst.getByte(1).getValue()
-                    + inst.getByte(2).getValue())
-                    + getRegister("I" + inst.getByte(3)).getValue();
+            int address;
+
+            if (inst.getByte(3).getValue() == 0) {
+				address = (inst.getSign() ? 1 : -1 )
+						* (inst.getByte(1).getValue() * 64
+						+ inst.getByte(2).getValue());
+			}
+			else {
+            	address = (inst.getSign() ? 1 : -1 )
+						* (inst.getByte(1).getValue()
+						+ inst.getByte(2).getValue())
+						+ getRegister("I" + inst.getByte(3)).getValue();
+			}
+
 
             // Get Field
             int field = inst.getByte(4).getValue();
@@ -105,10 +115,12 @@ public class Simulate {
 
             }
             else if (command == 5) { // NUM, CHAR, HLT
-
+				if (field == 2) {
+					break;
+				}
             }
             else if (command == 6) { // SLA, SRA, SLAX, SRAX, SLC, SRC
-
+				storer.store(address, field, command, this);
             }
             else if (command == 7) { // MOVE
             }
@@ -117,23 +129,24 @@ public class Simulate {
             }
             else if (24 <= command && command <= 33) { // STORE
             }
-            else if (34 <= command && command <= 38) {
+            else if (34 <= command && command <= 38) { // IO
+				if (command == 37) {
+					io.out(address, field, this);
+				}
+            }
+            else if (39 <= command && command <= 47) { // JUMP
 
             }
-            else if (39 <= command && command <= 47) {
+            else if (48 <= command && command <= 55) { // ENTER
 
             }
-            else if (48 <= command && command <= 55) {
-
-            }
-            else if (56 <= command && command <= 63) {
+            else if (56 <= command && command <= 63) { // COMPARE
 
             }
             else {
                 throw new IllegalArgumentException("Command nonexistent");
             }
         }
-
 
     }
 

@@ -1,12 +1,13 @@
 // TODO: This is like not good.... why is it implementing APart???
-package assembler;
+package assembler.expression;
 
+import assembler.APart;
+import assembler.Assemble;
+import assembler.BinaryOperator;
 import assembler.atom.Asterisk;
 import assembler.atom.AtomicExpression;
 import assembler.atom.Number;
 import assembler.symbol.DefinedSymbol;
-
-import java.util.HashMap;
 
 /**
  * <b>Expression class.</b>
@@ -118,10 +119,23 @@ public class Expression implements APart {
 	}
 
 	public int evaluate(Assemble assembler) {
-		if (rNode == null) {
+		Expression exp = this;
+		while(exp.rNode != null) {
+			exp = exp.rNode;
+		}
+
+
+		if (exp.lNode == null) {
+			return exp.sign * exp.value.evaluate(assembler);
+		} else {
+			return exp.op.evaluate(exp.sign * exp.value.evaluate(assembler), exp.lNode.evaluateLeft(assembler));
+		}
+	}
+	private int evaluateLeft(Assemble assembler) {
+		if (lNode == null) {
 			return sign * value.evaluate(assembler);
 		} else {
-			return op.evaluate(sign * value.evaluate(assembler), rNode.evaluate(assembler));
+			return op.evaluate(sign * value.evaluate(assembler), lNode.evaluateLeft(assembler));
 		}
 	}
 

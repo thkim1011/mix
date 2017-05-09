@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import assembler.expression.Expression;
 import assembler.symbol.LocalDefinedSymbol;
 import main.Constants;
 import main.Word;
