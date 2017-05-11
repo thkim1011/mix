@@ -19,7 +19,6 @@ public class Expression implements APart {
 	private Expression lNode;
 	private AtomicExpression value;
 	private BinaryOperator op;
-	private Expression rNode; // Doubly Linked List Structure
 
 	/**
 	 * Constructor - Takes a String exp and returns
@@ -28,33 +27,49 @@ public class Expression implements APart {
 	 */
 
 	public Expression(String exp) {
-		this(exp, null);
-	}
-
-	public Expression(String exp, Expression left) {
-		int i = 0;
-
-		// Check for the sign if it exists
-		if (exp.charAt(0) == '+' || exp.charAt(0) == '-') {
-			sign = (exp.charAt(0) == '+') ? 1 : -1;
-			i++;
-		} else {
+		if (exp.length() == 0) {
 			sign = 1;
+			lNode = null;
+			value = new Number(0);
+			op = null;
+			return;
 		}
-		int j = i + 1;
-		char temp = 0;
 
-		// Increment j until the character is an operator
-		while (j < exp.length()) {
-			temp = exp.charAt(j);
+		int i = exp.length() - 1;
+
+		// Decrement i until the character is an operator
+		while (i >= 0) {
+
+			char temp = exp.charAt(i);
 			if (temp == '+' || temp == '-' || temp == '*' || temp == '/' || temp == ':') {
 				break;
 			}
-			j++;
+			i--;
 		}
 
+
 		// This is a new atomic expression
-		String atom = exp.substring(i, j);
+		String atom = exp.substring(i + 1);
+
+
+
+		String operator;
+		if(i > 0 && exp.charAt(i) == '/' && exp.charAt(i - 1) == '/') {
+			i --;
+			operator = exp.substring(i , i + 2);
+		}
+		else if (i > 0) {
+			operator = exp.substring(i, i + 1);
+		}
+		else {
+			// No operator exists
+			operator = null;
+		}
+
+
+
+
+
 
 		// Test if number
 		// TODO: Replace this with REGEX
@@ -83,26 +98,38 @@ public class Expression implements APart {
 			value = new DefinedSymbol(atom, -1);
 		}
 
+
+
+
+
+
+
+
+
 		// If at the end of string, then there is no op or node
-		if (j == exp.length()) {
-			op = null;
-			rNode = null;
+		if (i == -1) {
+			lNode = null;
+			sign = 1;
+			return;
 		}
 
+		else if (i == 0) {
+			lNode = null;
+			if (exp.charAt(i) == '+') {
+				sign = 1;
+			}
+			else if (exp.charAt(i) == '-') {
+				sign = -1;
+			}
+			else {
+				throw new IllegalArgumentException("Inexistent Sign.");
+			}
+			return;
+		}
 		// Otherwise construct a new Expression and attach to this
 		else {
-			if (temp == '/' && exp.charAt(j + 1) == '/') {
-				op = new BinaryOperator("//");
-				rNode = new Expression(exp.substring(j + 2), this);
-			} else {
-				op = new BinaryOperator(exp.substring(j, j + 1));
-				if (exp.substring(j + 1).equals("")) {
-					rNode = null;
-				} else {
-					rNode = new Expression(exp.substring(j + 1), this);
-				}
-
-			}
+			op = new BinaryOperator(operator);
+			lNode = new Expression(exp.substring(0, i));
 		}
 	}
 
@@ -114,35 +141,32 @@ public class Expression implements APart {
 	 * @return Returns true if is a number and false otherwise
 	 */
 	private boolean isNumber(char c) {
-		return c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8'
+		return c == '0' ||
+				c == '1' ||
+				c == '2' ||
+				c == '3' ||
+				c == '4' ||
+				c == '5' ||
+				c == '6' ||
+				c == '7' ||
+				c == '8'
 				|| c == '9';
 	}
 
 	public int evaluate(Assemble assembler) {
-		Expression exp = this;
-		while(exp.rNode != null) {
-			exp = exp.rNode;
-		}
 
-
-		if (exp.lNode == null) {
-			return exp.sign * exp.value.evaluate(assembler);
-		} else {
-			return exp.op.evaluate(exp.sign * exp.value.evaluate(assembler), exp.lNode.evaluateLeft(assembler));
-		}
-	}
-	private int evaluateLeft(Assemble assembler) {
 		if (lNode == null) {
 			return sign * value.evaluate(assembler);
 		} else {
-			return op.evaluate(sign * value.evaluate(assembler), lNode.evaluateLeft(assembler));
+			return op.evaluate(value.evaluate(assembler),
+					lNode.evaluate(assembler));
 		}
 	}
 
 	public String toString() {
-		if (rNode.toString() == null) {
+		if (lNode.toString() == null) {
 			return (sign == 1 ? "+" : "-") + value.toString() + op.toString();
 		}
-		return (sign == 1 ? "+" : "-") + value.toString() + op.toString() + rNode.toString();
+		return (sign == 1 ? "+" : "-") + lNode.toString() + op.toString()  + value.toString() ;
 	}
 }

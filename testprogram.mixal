@@ -3,5 +3,4 @@
  END 0
 * Information
  ORIG 1000
- CON  8*64+9
- CON  8*64+9
+ CON  1

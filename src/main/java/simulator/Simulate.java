@@ -128,6 +128,7 @@ public class Simulate {
                 loader.load(address, field, command, this);
             }
             else if (24 <= command && command <= 33) { // STORE
+				
             }
             else if (34 <= command && command <= 38) { // IO
 				if (command == 37) {

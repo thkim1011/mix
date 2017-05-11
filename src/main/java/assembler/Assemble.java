@@ -156,9 +156,13 @@ public class Assemble {
                         start = 1;
                     }
                     Byte[] b = new Byte[5];
+                    for (int j = 0; j < 5; j++) {
+                        b[j] = new Byte(0);
+                    }
                     for(int j = start; j < word.length() && j < start + 5; j++) {
                         b[j - start] = new Byte(Constants.characterCode.get(word.charAt(j)));
                     }
+
                     myAssembled[myCounter] = new Word(true, b);
                     //TODO: Finish ALF
                 }
