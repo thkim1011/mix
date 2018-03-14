@@ -10,15 +10,12 @@ package main;
  * Also, if one wanted to extend this MIX simulator to a different byte size (I
  * have no idea why you would want to do that though), then simply change the
  * value of the precondition checking.
- * 
- * Until.. later, I will keep the Byte class immutable, so that I don't have to
- * make thousands of copies throughout the program.
- * 
+ *
  * @author Tae Hyung Kim
  */
 
-final public class Byte implements Comparable<Byte>{
-	final int myByte;
+public class Byte implements Comparable<Byte>{
+	int myValue;
 
 	/**
 	 * <b>Constructor for Byte class</b>. This is the only constructor for the
@@ -28,11 +25,11 @@ final public class Byte implements Comparable<Byte>{
 	 * primitive bigger than an int will not cast down correctly (if I remember
 	 * correctly), which will allow this to work pretty well :).
 	 */
-	public Byte(int a) {
-		if (a < 0 || a > 63) {
+	public Byte(int value) {
+		if (value < 0 || value > 63) {
 			throw new IllegalArgumentException("A byte must be between 0 and 63, inclusive.");
 		}
-		myByte = a;
+		myValue = value;
 	}
 
 	/**
@@ -40,9 +37,13 @@ final public class Byte implements Comparable<Byte>{
 	 * the time of writing, the only class that is using it to a large extent.
 	 */
 	public int getValue() {
-		return myByte;
+		return myValue;
 	}
 
+	protected void setValue(int value) {
+	    myValue = value;
+    }
+	
 	/**
 	 * <b>toString method.</b> This is very important for the toString method
 	 * given in the Word class which converts every Byte to its actual value for
@@ -50,7 +51,7 @@ final public class Byte implements Comparable<Byte>{
 	 * future).
 	 */
 	public String toString() {
-		String a = Integer.toString(myByte);
+		String a = Integer.toString(myValue);
 		if(a.length() == 1) {
 			a = "0" + a;
 		}
@@ -58,13 +59,13 @@ final public class Byte implements Comparable<Byte>{
 	}
 
 	public boolean equals(Object other) {
-		return this.myByte == ((Byte) other).myByte;
+		return this.myValue == ((Byte) other).myValue;
 	}
 	
 	/**
 	 * <b>compareTo method.</b> This method is required by Comparable. 
 	 */
 	public int compareTo(Byte other) {
-		return this.getValue() - ((Byte) other).getValue();
+		return this.getValue() - other.getValue();
 	}
 }

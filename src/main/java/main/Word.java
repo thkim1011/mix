@@ -9,13 +9,10 @@ import assembler.symbol.DefinedSymbol;
 import java.util.HashMap;
 
 /**
- * <b>Word class.</b> This class is universally used within the project,
- * so I decided to add this to the main package. Also, this is my first time
- * trying to use packages, so it may not be very well organized(?). Anyways, the
- * Word class is used to store a MIX word as Donald Knuth describes it: A
+ * <b>Word class.</b> The Word class is used to store a MIX word as Donald Knuth describes it: A
  * <i>computer word</i> consists of five bytes and a sign. The sign portion has
  * only two possible values, + and -.
- * <p>
+ *
  * There's quite a lot of constructors for this class, but they can be divided
  * into general groups. The first group, which only contains one, is a
  * constructor that essentially takes an instruction. Of course, it is given as
@@ -24,10 +21,6 @@ import java.util.HashMap;
  * simply takes in Byte objects as arguments and use those (and I'm allowed to
  * do this because the Byte class is immutable). The final only consists of the
  * default constructor. 12/24/16
- * <p>
- * TODO (2016/12/24): Find out if it's good idea to have a instance variable
- * that is dependent on other instance variable. For example, in this case,
- * myValue solely depends on mySign and myBytes.
  *
  * @author Tae Hyung Kim
  */
@@ -35,28 +28,6 @@ public class Word {
 
     private boolean mySign;
     private Byte[] myBytes;
-
-    /**
-     * <b>Constructor for Word Class.</b> This constructor takes in the normal
-     * parts of a MIX command and stores it as a Word object. This constructor
-     * is primarily used for the assembler process.
-     * <p>
-     * TODO: I need to figure out how java deals with signs when dividing so I
-     * can do something about the call to Math.abs.
-     * <p>
-     * TODO: GET RID OF THIS. Probably very bad modular design.
-     */
-    public Word(String command, APart address, IPart index, FPart field, Assemble assembler) {
-        myBytes = new Byte[5];
-        int addr = address.evaluate(assembler);
-        mySign = addr >= 0;
-        addr = Math.abs(addr);
-        myBytes[0] = new Byte(addr / 64);
-        myBytes[1] = new Byte(addr % 64);
-        myBytes[2] = new Byte(index.getValue(assembler));
-        myBytes[3] = new Byte(field.getValue(assembler));
-        myBytes[4] = new Byte(Constants.commands.get(command).getCode());
-    }
 
     /**
      * <b>Constructor for Word Class.</b> This constructor takes one boolean
@@ -77,7 +48,6 @@ public class Word {
      * <b>Constructor for Word class.</b> This was necessary due to the
      * existence of both positive and negative zero in the MIX language.
      * <p>
-     * TODO: Update this comment and the code is ugly :(
      */
     public Word(int sign, int x) {
         if (!(0 <= x && x < 1073741823)) {
@@ -88,31 +58,6 @@ public class Word {
         for (int i = 4; i >= 0; i--) {
             myBytes[i] = new Byte(x % 64);
             x = x / 64;
-        }
-    }
-
-    // TODO: check if this constructor works properly
-    // TODO: write a formal constructor javadoc (is that what it is?) comment
-    // specifying that null parts of myBytes do not modify anything in
-    // setAllBytes (which is actually pretty useful).
-    public Word(int sign, int x, FPart field, Assemble assembler) {
-        this(sign, x);
-        // Check if field is valid TODO: Maybe make this into a method?
-        // TODO: Fix
-        int left = field.getLeft(assembler);
-        int right = field.getRight(assembler);
-
-        // TODO: IMO the following code should've been done when the FPart was created.
-        if (!(0 <= left && left <= 5) || !(0 <= right && right <= 5) || left > right) {
-            throw new IllegalArgumentException("Field value is invalid");
-        }
-
-        // Set unspecified positions to null;
-        for (int i = 0; i <= 5; i++) {
-            if (!(left <= i && i <= right)) {
-                myBytes[i] = null; // TODO: err... preferably change this to
-                // "new Byte(0)"
-            }
         }
     }
 
@@ -135,9 +80,8 @@ public class Word {
     }
 
     /**
-     * <b>Default constructor for Word class.</b> Not much description is
-     * needed, I think. JK. I realized that I do need description. Note that
-     * this assigns the sign as positive (or true, in the context of this
+     * <b>Default constructor for Word class.</b> Assigns the sign as
+     * positive (or true, in the context of this
      * program), and sets all bits to 0.
      */
     public Word() {
@@ -154,6 +98,7 @@ public class Word {
     public Word(Word w) {
         this(w.getSign(), w.getByte(1), w.getByte(2), w.getByte(3), w.getByte(4), w.getByte(5));
     }
+
 
     /**
      * Implementation of toString() from Object
@@ -205,10 +150,6 @@ public class Word {
             throw new IllegalArgumentException("The given position is invalid.");
         }
         return myBytes[pos - 1];
-    }
-
-    public Word getCopy() {
-        return new Word(mySign, myBytes[0], myBytes[1], myBytes[2], myBytes[3], myBytes[4]);
     }
 
     public boolean getSign() {
