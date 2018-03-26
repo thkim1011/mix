@@ -15,7 +15,7 @@ This is a project I began because I was reading The Art of Computer Programming 
 So far, the assembly process seems to be working very well. I've recently incorporated unit testing into this project, and had to significantly restructure it as a result (I'm very new to the idea of large software), so I was delayed, but now I can get on to the simulator. I'll probably have to run more tests in order to catch all the bugs within the assembly process but it should be mostly good. 
 
 ## Usage
-As of the time or writing, this repository only contains the source. To build the project, use the tradition gradle command `gradle build`. Then in the terminal, type the command `java -cp /path/to/MIX.jar MIX /path/to/MIXAL/file.mixal`. It probably helps to make a batch file if you're using Windows.
+As of the time or writing, this repository only contains the source. To build the project, use the traditional gradle command `gradle build`. Then in the terminal, type the command `java -cp /path/to/MIX.jar MIX /path/to/MIXAL/file.mixal`. It probably helps to make a batch file if you're using Windows.
 
 ## To do
 * Make a simulator.
