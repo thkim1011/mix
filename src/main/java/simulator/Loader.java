@@ -1,11 +1,10 @@
 package simulator;
 
-import main.Word;
-
 /**
  * Created by Tae Hyung Kim on 2017-05-05.
  */
 public class Loader {
+    /*
     public void load(int address, int field, int command, Simulate simulator) {
         Word partial = partialField(simulator.getWord(address), field);
 
@@ -55,4 +54,5 @@ public class Loader {
 
         return partial;
     }
+    */
 }

@@ -1,5 +1,9 @@
-package assembler.symbol;
+package assembler;
 
+import word.Byte;
+import word.FutureByte;
+import word.FutureSign;
+import word.Sign;
 
 /**
  * <b>FutureReference</b>. This class defines a future reference within the assembly program.
@@ -9,31 +13,24 @@ package assembler.symbol;
  */
 public class FutureReference {
     private String myName;
-    private FutureSign mySign;
-    private FutureByte myByte1;
-    private FutureByte myByte2;
+    private Sign mySign;
+    private Byte myByte1;
+    private Byte myByte2;
 
-    public FutureReference(String name) {
+    public FutureReference(String name, Sign sign, Byte byte1, Byte byte2) {
         myName = name;
-        mySign = new FutureSign();
-        myByte1 = new FutureByte();
-        myByte2 = new FutureByte();
-    }
-
-    public FutureByte getFirstByte() {
-        return myByte1;
-    }
-
-    public FutureByte getSecondByte() {
-        return myByte2;
-    }
-
-    public void updateBytes(boolean sign, int value) {
-        myByte1.setValue(value >> 6);
-        myByte2.setValue(value & 0x3F);
+        mySign = sign;
+        myByte1 = byte1;
+        myByte2 = byte2;
     }
 
     public String getName() {
         return myName;
+    }
+
+    public void updateBytes(int value) {
+        mySign.setSign(value >= 0);
+        myByte1.setValue(value >> 6);
+        myByte2.setValue(value & 0x3F);
     }
 }

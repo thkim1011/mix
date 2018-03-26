@@ -11,6 +11,5 @@ public class TestMIX {
     @Test
     public void Test() throws IOException {
         String[] d = {"testprogram.mixal"};
-        MIX.main(d);
     }
 }

@@ -1,4 +1,4 @@
-package main;
+package word;
 
 /**
  * <b>Byte class.</b> The byte class is essentially a wrapper for a value that
@@ -40,7 +40,12 @@ public class Byte implements Comparable<Byte>{
 		return myValue;
 	}
 
-	protected void setValue(int value) {
+	/**
+	 * This method sets the value of the Byte object. Originally, it was intended for the
+     * Byte to be immutable, but this changed with the recent large project overhaul.
+	 * @param value
+	 */
+	public void setValue(int value) {
 	    myValue = value;
     }
 	

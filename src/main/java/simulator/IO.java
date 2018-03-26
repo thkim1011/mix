@@ -1,11 +1,10 @@
 package simulator;
 
-import main.Word;
-
 /**
  * Created by Tae Hyung Kim on 2017-05-07.
  */
 public class IO {
+    /*
     public void in(int unit) {
         
     }
@@ -81,5 +80,6 @@ public class IO {
             default: throw new IllegalArgumentException("Doesn't exist..");
         }
     }
+     */
 
 }

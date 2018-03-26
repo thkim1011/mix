@@ -1,6 +1,6 @@
-package assembler.symbol;
+package word;
 
-import main.Byte;
+import word.Byte;
 
 public class FutureByte extends Byte {
     public FutureByte() {

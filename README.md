@@ -1,8 +1,12 @@
 # MIX Simulator and Assembler 
 [![Build Status](https://travis-ci.org/thkim1011/mix.svg?branch=master)](https://travis-ci.org/thkim1011/mix)
 
+## UPDATE March 25, 2018
+I managed to completely clean out the design of the assembler. At the moment, the Assembler class is complete only for MIX operators, although I do need to write more tests. I think I'll be able to finish the Assembler soon enough, and soon I'll be able to work on the Simulator. I'm also working on a UI for this, but I'm not experienced in UI design, so we'll see about that. Anything that follows in the README is old content.
+
 ## REBOOT!!!
 Project currently undergoing redesign.
+
 
 ## About
 This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science). This book, contrary to many other books, use the hypothetical computer called MIX and the assembly language MIXAL associated with it. Upon reading how this computer works in detail, I was pretty amazed because I could finally conceive how a computer works. As a result, I decided to create a simulator and assembler for MIX. This program will provide tools to assemble and load MIXAL programs onto a MIX computer and run these programs. 

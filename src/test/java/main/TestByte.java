@@ -1,6 +1,7 @@
 package main;
 
 import org.junit.Test;
+import word.Byte;
 
 import static org.junit.Assert.assertEquals;
 

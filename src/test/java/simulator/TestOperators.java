@@ -1,8 +1,6 @@
 package simulator;
 
 import org.junit.Test;
-import main.Word;
-import main.MIX;
 
 public class TestOperators {
 	@Test

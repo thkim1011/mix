@@ -1,10 +1,5 @@
 package simulator;
 
-import assembler.Assemble;
-import simulator.register.JumpRegister;
-import simulator.register.Register;
-import main.Word;
-
 /**
  * <b>Simulate class.</b> This implementation of MIX consists of three
  * components: the assembler, the debugger, and the simulator. This class acts
@@ -28,6 +23,7 @@ import main.Word;
  *
  */
 public class Simulate {
+	/*
 	// Defining All Registers
 	final private Register myRegA;
 	final private Register myRegX;
@@ -214,6 +210,6 @@ public class Simulate {
 
 	public Word getWord(int index) {
 	    return myMemory[index];
-    }
+    }*/
 
 }

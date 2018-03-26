@@ -1,7 +1,7 @@
 package simulator.register;
 
-import main.Word;
-import main.Byte;
+import word.Word;
+import word.Byte;
 
 /**
  * <b>Register class.</b> The simulator.register class serves to be an abstraction of the
@@ -46,7 +46,7 @@ public class Register {
 		int i;
 		for(i = 5; i >= 1; i--) {
 			if(i >= 6 - mySize) {
-				myBytes[i-1] = in.getByte(i);
+				// myBytes[i-1] = in.getByte(i);
 			}
 			else {
 				if(myBytes[i-1].getValue() != 0) {
