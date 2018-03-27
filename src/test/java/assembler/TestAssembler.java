@@ -1,11 +1,11 @@
 package assembler;
 
 import org.junit.Test;
-import word.Word;
+import main.Word;
 
 import static org.junit.Assert.*;
 
-public class TestAssembly {
+public class TestAssembler {
     @Test
     public void testAssemble() {
         // Set up
@@ -15,6 +15,58 @@ public class TestAssembly {
         Word actual1 = asm.assemble(" LDA 2000,2(0:3)");
         Word expected1 = new Word(true, 31, 16, 2, 3, 8);
         assertEquals(expected1, actual1);
+
+        Word actual2 = asm.assemble(" LDA 2000,2(1:3)");
+        Word expected2 = new Word(true, 31, 16, 2, 11, 8);
+        assertEquals(expected2, actual2);
+
+        Word actual3 = asm.assemble(" LDA 2000(1:3)");
+        Word expected3 = new Word(true, 31, 16, 0, 11, 8);
+        assertEquals(expected3, actual3);
+
+        Word actual4 = asm.assemble( " LDA 2000");
+        Word expected4 = new Word(true, 31, 16, 0, 5, 8);
+        assertEquals(expected4, actual4);
+
+        Word actual5 = asm.assemble(" LDA -2000,4");
+        Word expected5 = new Word(false, 31, 16, 4, 5, 8);
+        assertEquals(expected5, actual5);
+
+        // EQU
+        asm.assemble("ASDF EQU 1000");
+        int actual6 = asm.getDefinedSymbol("ASDF");
+        int expected6 = 1000;
+        assertEquals(expected6, actual6);
+
+        asm.assemble("HELLO EQU 1,-1000(0:2)");
+        int actual7 = asm.getDefinedSymbol("HELLO");
+        int expected7 = -(1000 * 64 * 64 * 64 + 1);
+        assertEquals(expected7, actual7);
+
+        // ORIG
+        int counter = asm.getCounter();
+        asm.assemble("TABLE ORIG *+100");
+        int actual8 = asm.getCounter();
+        int expected8 = counter + 100;
+        assertEquals(expected8, actual8);
+
+        asm.assemble(" ORIG 2000");
+        int actual9 = asm.getCounter();
+        int expected9 = 2000;
+        assertEquals(expected9, actual9);
+
+        // CON
+        Word actual10 = asm.assemble(" CON 1,-1000(0:2)");
+        Word expected10 = new Word(false, 15, 40, 0, 0, 1);
+        assertEquals(actual10, expected10);
+
+        // ALF
+        Word actual11 = asm.assemble(" ALF  HELLO");
+        Word actual12 = asm.assemble(" ALF  WORLD");
+        Word expected11 = new Word(true, 8, 5, 13, 13, 16);
+        Word expected12 = new Word(true, 26, 16, 19, 13, 4);
+        assertEquals(expected11, actual11);
+        assertEquals(expected12, actual12);
     }
 
     @Test
@@ -207,6 +259,7 @@ public class TestAssembly {
         // Test edge case "//"
         assertTrue(asm.isExpression("PRIME//PRIME//PRIME"));
         assertTrue(asm.isExpression("1//2//3+3+2+5//4"));
+        assertTrue(asm.isExpression("*+100"));
 
         // Bad examples
         assertFalse(asm.isExpression(""));
@@ -274,5 +327,25 @@ public class TestAssembly {
         assertTrue(asm.isWValue("-1000(0:2),1"));
         assertTrue(asm.isWValue("1000,1234(0:4),2534(0:3),5432(0:2)"));
         assertTrue(asm.isWValue("A,B(0:2)"));
+        assertTrue(asm.isWValue("*+100"));
+    }
+
+    @Test
+    public void testEvaluateWValue() {
+        Assembler asm = new Assembler();
+        asm.addDefinedSymbol("A", 3);
+        asm.addDefinedSymbol("B", 9001);
+
+        Word actual1 = asm.evaluateWValue("1");
+        Word expected1 = new Word(true, 0, 0, 0, 0, 1);
+        assertEquals(expected1, actual1);
+
+        Word actual2 = asm.evaluateWValue("1,-1000(0:2)");
+        Word expected2 = new Word(false, 15, 40, 0, 0, 1);
+        assertEquals(expected2, actual2);
+
+        Word actual3 = asm.evaluateWValue("-1000(0:2),1");
+        Word expected3 = new Word(true, 0, 0, 0, 0, 1);
+        assertEquals(expected3, actual3);
     }
 }

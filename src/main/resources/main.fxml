@@ -12,7 +12,14 @@
             fx:controller="ui.UserInterface"
             prefHeight="400.0" prefWidth="600.0">
     <top>
-        <Text>Hello World!</Text>
+        <HBox id="top">
+            <Button>Load</Button>
+            <Button>Save</Button>
+            <Button>Run</Button>
+            <Button>Step</Button>
+            <Button>Prev</Button>
+            <Button>Reset</Button>
+        </HBox>
     </top>
 
     <center>
@@ -23,9 +30,10 @@
             </tabs>
         </TabPane>
     </center>
+
     <right>
-        <StackPane minWidth="400">
-            <Text>asdf</Text>
-        </StackPane>
+        <VBox>
+            <Text>rA</Text>
+        </VBox>
     </right>
 </BorderPane>

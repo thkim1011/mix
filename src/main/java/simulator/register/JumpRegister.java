@@ -1,6 +1,6 @@
 package simulator.register;
 
-import word.Word;
+import main.Word;
 
 /**
  * <b>JumpRegister class.</b> The JumpRegister class is a subclass of the

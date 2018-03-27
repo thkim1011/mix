@@ -1,4 +1,4 @@
-package word;
+package main;
 
 /**
  * <b>Byte class.</b> The byte class is essentially a wrapper for a value that

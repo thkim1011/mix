@@ -1,7 +1,7 @@
 package simulator.register;
 
-import word.Word;
-import word.Byte;
+import main.Word;
+import main.Byte;
 
 /**
  * <b>Register class.</b> The simulator.register class serves to be an abstraction of the

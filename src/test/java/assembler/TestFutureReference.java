@@ -1,4 +1,4 @@
-package assembler.symbol;
+package assembler;
 
 import org.junit.Test;
 import assembler.FutureReference;

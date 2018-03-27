@@ -1,9 +1,7 @@
 package assembler;
 
-import word.Byte;
-import word.FutureByte;
-import word.FutureSign;
-import word.Sign;
+import main.Byte;
+import main.Sign;
 
 /**
  * <b>FutureReference</b>. This class defines a future reference within the assembly program.

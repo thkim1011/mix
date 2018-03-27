@@ -1,4 +1,4 @@
-package word;
+package main;
 
 import assembler.FutureReference;
 
@@ -30,6 +30,21 @@ public class Word {
         myBytes[2] = new Byte(a3);
         myBytes[3] = new Byte(a4);
         myBytes[4] = new Byte(a5);
+    }
+
+    public Word(int val) {
+        mySign = new Sign(val >= 0);
+        myBytes = new Byte[5];
+        val = Math.abs(val);
+        myBytes[4] = new Byte(val % 64);
+        val /= 64;
+        myBytes[3] = new Byte(val % 64);
+        val /= 64;
+        myBytes[2] = new Byte(val % 64);
+        val /= 64;
+        myBytes[1] = new Byte(val % 64);
+        val /= 64;
+        myBytes[0] = new Byte(val);
     }
 
     public Word(boolean sign, Byte[] bytes) {
@@ -139,5 +154,41 @@ public class Word {
                 this.getByte(3) == w.getByte(3) &&
                 this.getByte(4) == w.getByte(4) &&
                 this.getByte(5) == w.getByte(5);
+    }
+
+    /**
+     * This is pretty hacky so fix later.
+     * @param expr
+     * @param field
+     * @return
+     */
+    public Word applyWValue(int expr, int field) {
+        Word toApply = new Word(expr);
+        if (!isValidField(field)) {
+            throw new IllegalArgumentException("Rule 9. Each F_i must have the form 8L + R where " +
+                    "0 <= L <= R <= 5.");
+        }
+        int left = field / 8;
+        int right = field % 8;
+
+        // Handle sign
+        if(left == 0) {
+            setSign(toApply.getSign());
+            left++;
+            if (right == 0) {
+                return this;
+            }
+        }
+
+        for (int i = left; i <= right; i++) {
+            setByte(i, toApply.getByte(i - right + 5));
+        }
+        return this;
+    }
+
+    public static boolean isValidField(int field) {
+        int left = field / 8;
+        int right = field % 8;
+        return 0 <= left && left <= right && right <= 5;
     }
 }

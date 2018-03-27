@@ -1,10 +1,13 @@
 package assembler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import main.Constants;
-import word.Word;
+import main.Word;
+import main.Byte;
 import misc.Pair;
 
 /**
@@ -22,6 +25,7 @@ public class Assembler {
     private int myCounter;
     // Symbols
     private Map<String, Integer> myDefinedSymbols;
+    private List<FutureReference> myFutureReferences;
 
     /**
      * The Assemble constructor creates an instance of the Assemble class which
@@ -32,6 +36,7 @@ public class Assembler {
     public Assembler() {
         myCounter = 0;
         myDefinedSymbols = new HashMap<>();
+        myFutureReferences = new ArrayList<>();
 
         // Instantiate Local Symbols
         for (int i = 0; i <= 9; i++) {
@@ -52,6 +57,10 @@ public class Assembler {
 
         if (!loc.equals("")) {
             // Add as a defined symbol
+            if (!isSymbol(loc)) {
+                throw new IllegalArgumentException("Rule 1: A symbol is a string of one to ten " +
+                        "letters/digits, containing at least one letter.");
+            }
             addDefinedSymbol(loc, getCounter());
         }
 
@@ -74,29 +83,45 @@ public class Assembler {
         }
 
         else if (op.equals("EQU")) {
-            // new WValue(addr)
-            // set declared symbol = WValue(addr)
-            //
+            // Process address field
+            if (!isWValue(address)) {
+                throw new IllegalArgumentException("Rule 11b. The ADDRESS should be a WValue.");
+            }
+            int val = evaluateWValue(address).getValue();
+            modifyDefinedSymbol(loc, val);
+            return null;
         }
 
         else if (op.equals("ORIG")) {
-            // new WValue(addr)
-            //
+            if (!isWValue(address)) {
+                throw new IllegalArgumentException("Rule 11c. The ADDRESS should be a WValue.");
+            }
+            int val = evaluateWValue(address).getValue();
+            myCounter = val;
+            return null;
         }
 
         else if (op.equals("CON")) {
-
+            if (!isWValue(address)) {
+                throw new IllegalArgumentException("Rule 11d. The ADDRESS should be a WValue.");
+            }
+            myCounter++;
+            return evaluateWValue(address);
         }
 
         else if (op.equals("ALF")) {
-
+            myCounter++;
+            Byte[] word = new Byte[5];
+            for(int i = 0; i < 5; i++) {
+                word[i] = new Byte(Constants.CHARACTER_CODE.get(address.charAt(i)));
+            }
+            return new Word(true, word);
         }
 
         else {
             throw new IllegalArgumentException("Rule 11. OP is not among the" +
                     "six possibilities defined on page 155.");
         }
-        return null;
     }
 
     /**
@@ -254,6 +279,15 @@ public class Assembler {
     }
 
     /**
+     * The only function to call this method is when EQU is being processed.
+     * @param name is the name of symbol.
+     * @param value is the value of symbol.
+     */
+    public void modifyDefinedSymbol(String name, int value) {
+        myDefinedSymbols.put(name, value);
+    }
+
+    /**
      * Tests if name is a defined symbol.
      * @param name is a symbol.
      * @return true or false.
@@ -363,7 +397,8 @@ public class Assembler {
 
         int j = i + 1;
 
-        if (i > 0 && isBinaryOperation(expr.substring(i - 1, i))) i--;
+        if (i > 0 && isBinaryOperation(expr.substring(i - 1, i)) &&
+                expr.substring(i - 1, i + 1).equals("//")) i--;
         return isExpression(expr.substring(0, i)) && isBinaryOperation(expr.substring(i, j)) &&
                 isAtomicExpression(expr.substring(j));
     }
@@ -497,10 +532,29 @@ public class Assembler {
 
     /**
      * Evaluates a wval string into a Word.
-     * @param wval is the wval to be processed.
+     * @param val is the wval to be processed.
      * @return the Word that is the evaluation of the WValue.
      */
-    public Word evaluateWValue(String wval) {
-        return null;
+    public Word evaluateWValue(String val) {
+        // Find separating index
+        int i = val.length() - 1;
+        while (i >= 0 && val.charAt(i) != ',') i--;
+
+        int j = i + 1;
+        while (j < val.length() && val.charAt(j) != '(') j++;
+        if (i < 0) {
+            return (new Word()).applyWValue(
+                    evaluateExpression(val.substring(0, j)),
+                    processFPart(val.substring(j), 5));
+        }
+        return evaluateWValue(val.substring(0, i)).applyWValue(
+                evaluateExpression(val.substring(i + 1, j)),
+                processFPart(val.substring(j), 5));
+
+    }
+
+    public void updateFutureReferences(String name, int value) {
+        for (int i = 0; i < myFutureReferences.size(); i++) {
+        }
     }
 }

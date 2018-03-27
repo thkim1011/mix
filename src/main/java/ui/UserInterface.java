@@ -18,7 +18,10 @@ public class UserInterface extends Application {
     public void start(Stage primaryStage) throws IOException {
         primaryStage.setTitle("Testing");
         Parent root = FXMLLoader.load(getClass().getResource("../../resources/main.fxml"));
+
+
         Scene scene = new Scene(root, 300, 200);
+        scene.getStylesheets().add(getClass().getResource("../../resources/style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.show();

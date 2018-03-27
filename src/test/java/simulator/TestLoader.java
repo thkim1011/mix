@@ -1,6 +1,6 @@
 package simulator;
 
-import word.Word;
+import main.Word;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

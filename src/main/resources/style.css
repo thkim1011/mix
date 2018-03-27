@@ -1,0 +1,15 @@
+#top {
+    -fx-min-height: 70px;
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-background-color: white;
+    -fx-background-radius: 20px;
+    -fx-font-size: 20px;
+    -fx-min-height: 50px;
+    -fx-min-width: 80px;
+    -fx-border-width: 2px;
+    -fx-border-color: blue;
+    -fx-border-radius: 20px;
+}
