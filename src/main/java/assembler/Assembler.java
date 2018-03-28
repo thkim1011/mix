@@ -8,7 +8,7 @@ import java.util.Map;
 import main.Constants;
 import main.Word;
 import main.Byte;
-import misc.Pair;
+import main.Pair;
 
 /**
  * <b>Assemble class.</b> This implementation of MIX consists of three

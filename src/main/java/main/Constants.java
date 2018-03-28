@@ -3,8 +3,6 @@ package main;
 import java.util.HashMap;
 import java.util.Map;
 
-import misc.Pair;
-
 public class Constants {
 	public final static Map<String, Pair> COMMANDS = makeCommands();
 	public final static Map<Character, Integer> CHARACTER_CODE = makeCharacterCode();

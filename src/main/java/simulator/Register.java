@@ -1,4 +1,4 @@
-package simulator.register;
+package simulator;
 
 import main.Word;
 import main.Byte;
@@ -23,45 +23,18 @@ import main.Byte;
  */
 
 public class Register {
-	private boolean mySign;
-	private Byte[] myBytes;
-	final private int mySize;
+	Word myWord;
 
-	public Register(int size) {
-
-		mySign = true;
-		myBytes = new Byte[size];
-		for (int i = 0; i < size; i++) {
-			myBytes[i] = new Byte(0);
-		}
-		mySize = size;
+	public Register() {
+		myWord = new Word();
 	}
 
-	public Word getWord() {
-		return new Word(mySign, myBytes);
-	}
-
-	public void setRegister(Word in) {
-		mySign = in.getSign();
-		int i;
-		for(i = 5; i >= 1; i--) {
-			if(i >= 6 - mySize) {
-				// myBytes[i-1] = in.getByte(i);
-			}
-			else {
-				if(myBytes[i-1].getValue() != 0) {
-					throw new IllegalArgumentException("Inexistent bytes of the simulator.register were attempted to be written.");
-				}
-			}
-		}
+	public int getByte(int pos) {
+		return myWord.getByte(pos);
 	}
 
 	public int getValue() {
-		int value = 0;
-		for(int i = 0; i < mySize; i++) {
-			value *= 64;
-			value += myBytes[i].getValue();
-		}
-		return value;
+		return myWord.getValue();
 	}
+
 }

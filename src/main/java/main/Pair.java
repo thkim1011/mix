@@ -1,4 +1,4 @@
-package misc;
+package main;
 
 /**
  * <b>Pair class.</b> This class represents a pair of two integers. In this
