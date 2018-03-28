@@ -37,4 +37,8 @@ public class Register {
 		return myWord.getValue();
 	}
 
+	public Word getWord() {
+		return new Word(myWord);
+	}
+
 }

@@ -79,6 +79,15 @@ public class Word {
     }
 
     /**
+     * Constructs a copy of word.
+     * TODO: Implement.
+     * @param w
+     */
+    public Word(Word w) {
+
+    }
+
+    /**
      * Implementation of toString() from Object
      *
      * @return A String consisting of the sign and the five bytes separated by
