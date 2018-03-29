@@ -1,6 +1,7 @@
 package main;
 
 import assembler.FutureReference;
+import assembler.LiteralConstant;
 
 /**
  * <b>Word class.</b> The Word class is used to store a MIX word as Donald Knuth describes it: A
@@ -80,11 +81,14 @@ public class Word {
 
     /**
      * Constructs a copy of word.
-     * TODO: Implement.
      * @param w
      */
     public Word(Word w) {
-
+        this(w.getSign(), w.getByte(1),
+                w.getByte(2),
+                w.getByte(3),
+                w.getByte(4),
+                w.getByte(5));
     }
 
     /**
@@ -154,6 +158,9 @@ public class Word {
         return new FutureReference(myName, mySign, myBytes[0], myBytes[1]);
     }
 
+    public LiteralConstant getLiteralConstant(String wval) {
+        return new LiteralConstant(myName, wval, mySign, myBytes[0], myBytes[1]);
+    }
     @Override
     public boolean equals(Object other) {
         Word w = (Word) other;
@@ -199,5 +206,23 @@ public class Word {
         int left = field / 8;
         int right = field % 8;
         return 0 <= left && left <= right && right <= 5;
+    }
+
+    public int getValueByField(int field) {
+        if (!isValidField(field)) {
+            throw new IllegalArgumentException("Field is not valid.");
+        }
+        int left = field / 8;
+        int right = field % 8;
+        int value = 0;
+        for (int i = left; i <= right; i++) {
+            value *= 64;
+            value += getByte(i);
+        }
+
+        if (left == 0) {
+            value = (mySign.getSign() ? 1 : -1) * value;
+        }
+        return value;
     }
 }

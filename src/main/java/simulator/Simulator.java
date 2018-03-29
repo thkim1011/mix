@@ -26,6 +26,14 @@ public class Simulator {
         }
 
         rJ = new JumpRegister();
+
+        myMemory = new Word[4000];
+        for (int i = 0; i < 4000; i++) {
+            myMemory[i] = new Word();
+        }
+
+        myOverflowToggle = false;
+        myComparisonIndicator = 0;
     }
 
     public void run(Word inst) {
@@ -67,21 +75,74 @@ public class Simulator {
         return rJ;
     }
 
+    /**
+     * Get Word at memory address index.
+     * @param index is the address.
+     * @return the Word.
+     */
     public Word getMemory(int index) {
         return new Word(myMemory[index]);
     }
 
+    /**
+     * Set Word at memory address index.
+     * @param index is the address.
+     * @param w is the word to be set.
+     */
     public void setMemory(int index, Word w) {
-
+        myMemory[index] = new Word(w);
     }
 
-    public void load(Register reg, int m, int field) {
+    /**
+     * Loads a Word in memory into the Register
+     * @param reg is the register.
+     * @param m is the location to be loaded.
+     * @param field is the field specification.
+     */
+    public void load(Register reg, int m, int field, boolean isNegative) {
+        int left = field / 8;
+        int right = field % 8;
+        Word wordToLoad = getMemory(m);
 
+        if (left == 0) {
+            reg.setSign(wordToLoad.getSign());
+            left++;
+        }
+        else {
+            reg.setSign(true);
+        }
+
+        if (isNegative) {
+            reg.setSign(!reg.getSign());
+        }
+
+        // Set indices
+        int i = 5;
+        int j = right;
+
+        while (j >= left) {
+            reg.setByte(i, wordToLoad.getByte(j));
+            j--;
+            i--;
+        }
+
+        // Zero out the rest
+        while (i > 0) {
+            reg.setByte(i, 0);
+            i--;
+        }
     }
 
+    /**
+     * Stores a Word in the register into memory.
+     * @param reg is the register.
+     * @param m is the address where the Word will be stored.
+     * @param field is the field specification.
+     */
     public void store(Register reg, int m, int field) {
 
     }
+
     /**
      * Applies arithmetic.
      * @param op is one of 1, 2, 3, 4, which corresponds to ADD, SUB, MUL, DIV, resp.

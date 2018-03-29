@@ -41,4 +41,16 @@ public class Register {
 		return new Word(myWord);
 	}
 
+	public boolean getSign() {
+		return myWord.getSign();
+	}
+
+	public void setByte(int pos, int val) {
+		myWord.setByte(pos, val);
+	}
+
+	public void setSign(boolean sign) {
+		myWord.setSign(sign);
+	}
+
 }

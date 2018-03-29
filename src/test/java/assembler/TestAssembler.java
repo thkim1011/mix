@@ -67,6 +67,50 @@ public class TestAssembler {
         Word expected12 = new Word(true, 26, 16, 19, 13, 4);
         assertEquals(expected11, actual11);
         assertEquals(expected12, actual12);
+/*
+        // Local symbols test
+        counter = asm.getCounter();
+        Word actual21 = asm.assemble("   NOP 2F");
+        Word actual22 = asm.assemble("2H NOP");
+        Word actual23 = asm.assemble("   NOP 2B");
+        Word expected21 = new Word(true, (counter + 1) / 64, (counter + 1) % 64, 0, 0, 0);
+        Word expected22 = new Word(true, 0, 0, 0, 0, 0);
+        Word expected23 = new Word(true, (counter + 1) / 64, (counter + 1) % 64, 0, 0, 0);
+
+        assertEquals(expected21, actual21);
+        assertEquals(expected22, actual22);
+        assertEquals(expected23, actual23);
+*/
+        // Literal Constants and void Future References test
+        asm.assemble(" ORIG 0");
+        Word actual13 = asm.assemble("START LDA =1=");
+        asm.assemble(" NOP");
+        asm.assemble(" NOP");
+        asm.assemble(" NOP");
+        Word actual14 = asm.assemble(" LDA ABC");
+        Word actual15 = asm.assemble(" LDA QWERTY");
+        asm.assemble(" END START");
+        Word expected13 = new Word(true, 0, 6, 0, 5, 8);
+        Word expected14 = new Word(true, 0, 7, 0, 5, 8);
+        Word expected15 = new Word(true, 0, 8, 0, 5, 8);
+
+        assertEquals(expected13, actual13);
+        assertEquals(expected14, actual14);
+        assertEquals(expected15, actual15);
+
+        Word actual16 = asm.getMemoryAt(6);
+        Word expected16 = new Word(true, 0, 0, 0, 0, 1);
+        Word actual17 = asm.getMemoryAt(7);
+        Word expected17 = new Word(true, 0, 0, 0, 0, 0);
+        Word actual18 = asm.getMemoryAt(8);
+        Word expected18 = new Word(true, 0, 0, 0, 0, 0);
+
+        assertEquals(expected16, actual16);
+        assertEquals(expected17, actual17);
+        assertEquals(expected18, actual18);
+
+        // Final test for END
+        assertEquals(0, asm.getCounter());
     }
 
     @Test
@@ -141,12 +185,29 @@ public class TestAssembler {
         asm.addDefinedSymbol("PRIME", 7);
         asm.addDefinedSymbol("L", 3);
 
-        /*
-        int actual1 = asm.processAPart("");
-        int expected1 = 0;
+        // Vacuous
+        Word actual1 = asm.processAPart("");
+        Word expected1 = new Word(true, 0, 0, 0, 0, 0);
         assertEquals(expected1, actual1);
-        */
 
+        // Expressions
+        Word actual2 = asm.processAPart("***");
+        Word expected2 = new Word(true, 0, 0, 0, 0, 0);
+        assertEquals(expected2, actual2);
+
+        Word actual3 = asm.processAPart("PRIME+L");
+        Word expected3 = new Word(true, 0, 10, 0, 0, 0);
+        assertEquals(expected3, actual3);
+
+        // Future Reference
+        Word actual4 = asm.processAPart("HELLO");
+        Word expected4 = new Word(true, 0, 0, 0, 0, 0);
+        assertEquals(expected4, actual4);
+
+        // Literal Constants
+        Word actual5 = asm.processAPart("=1=");
+        Word expected5 = new Word(true, 0, 0, 0, 0, 0);
+        assertEquals(expected5, actual5);
     }
 
 
@@ -261,6 +322,9 @@ public class TestAssembler {
         assertTrue(asm.isExpression("1//2//3+3+2+5//4"));
         assertTrue(asm.isExpression("*+100"));
 
+        // Test edge case with *
+        assertTrue(asm.isExpression("***"));
+
         // Bad examples
         assertFalse(asm.isExpression(""));
         assertFalse(asm.isExpression("+-+-+"));
@@ -347,5 +411,20 @@ public class TestAssembler {
         Word actual3 = asm.evaluateWValue("-1000(0:2),1");
         Word expected3 = new Word(true, 0, 0, 0, 0, 1);
         assertEquals(expected3, actual3);
+    }
+
+    @Test
+    public void testFutureReferences() {
+        Assembler asm = new Assembler();
+
+        Word actual1 = asm.assemble(" LDA FUTURE");
+        asm.assemble("FUTURE LDA 2000");
+        Word expected1 = new Word(true, 0, 1, 0, 5, 8);
+        assertEquals(expected1, actual1);
+
+        Word actual2 = asm.assemble(" LDA FUTURE2");
+        asm.assemble("FUTURE2 EQU 2000");
+        Word expected2 = new Word(true, 31, 16, 0, 5, 8);
+        assertEquals(expected2, actual2);
     }
 }

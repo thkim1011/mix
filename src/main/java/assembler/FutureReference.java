@@ -31,4 +31,8 @@ public class FutureReference {
         myByte1.setValue(value >> 6);
         myByte2.setValue(value & 0x3F);
     }
+
+    public String getConLine() {
+        return myName + " CON 0";
+    }
 }
