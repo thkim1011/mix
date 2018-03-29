@@ -17,20 +17,19 @@ public class Main {
             BufferedReader in = new BufferedReader(fr);
             PrintWriter writer = new PrintWriter("a.mix", "UTF-8");
 
-            String line = "";
+            String line;
             // MEMORY
-            Word[] memory = new Word[4000];
-            for (int i = 0 ; i < 4000; i++) {
-                memory[i] = new Word();
-            }
-
-            while(line != null) {
+            while(true) {
                 line = in.readLine();
-                int counter = asm.getCounter();
-                Word assembled = asm.assemble(line);
-                memory[counter] = assembled;
+                if (line == null) {
+                    break;
+                }
+                if (!line.equals("") && line.charAt(0) != '*') {
+                    asm.assemble(line);
+                }
             }
 
+            Word[] memory = asm.getMemory();
             for (int i = 0; i < 4000; i++) {
                 writer.println(memory[i].toString());
             }

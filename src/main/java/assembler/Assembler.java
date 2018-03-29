@@ -13,8 +13,9 @@ import main.Pair;
  * to perform the operations of the assembler. In order to use this class, an
  * instance of an assembler must be created first using the constructor, and
  * then the assemble method must be run on each individual line.
- *
+ * <p>
  * TODO: Implement Locals
+ *
  * @author Tae Hyung Kim
  */
 
@@ -25,7 +26,6 @@ public class Assembler {
     private Map<String, Integer> myDefinedSymbols;
     private List<FutureReference> myFutureReferences;
     private List<LiteralConstant> myLiteralConstants;
-    private int[] myLocalSymbols;
     // Memory
     private Word[] myMemory;
     // END
@@ -42,7 +42,6 @@ public class Assembler {
         myDefinedSymbols = new HashMap<>();
         myFutureReferences = new ArrayList<>();
         myLiteralConstants = new ArrayList<>();
-        myLocalSymbols = new int[10];
         myMemory = new Word[4000];
         isEnd = false;
 
@@ -59,6 +58,7 @@ public class Assembler {
 
     /**
      * Assembles given line of code with the current local defined symbols.
+     *
      * @param line is the line to be assembled.
      * @return the assembled line as a Word.
      */
@@ -69,33 +69,7 @@ public class Assembler {
         String address = tokenizedInst[2];
 
         if (!loc.equals("")) {
-            // Add as a defined symbol
-            // If isEnd, the machine generates
-            // its own symbol names.
-            if (!isSymbol(loc) && !isEnd) {
-                throw new IllegalArgumentException("Rule 1: A symbol is a string of one to ten " +
-                        "letters/digits, containing at least one letter.");
-            }
-            // EQU has precedence
-            if (!op.equals("EQU")) {
-                addDefinedSymbol(loc, getCounter());
-            }
-            else {
-                // Process address field
-                if (!isWValue(address)) {
-                    throw new IllegalArgumentException("Rule 11b. The ADDRESS should be a WValue.");
-                }
-                int val = evaluateWValue(address).getValue();
-                addDefinedSymbol(loc, val);
-            }
-
-            for (int i = myFutureReferences.size() - 1; i >= 0; i--) {
-                FutureReference f = myFutureReferences.get(i);
-                if (f.getName().equals(loc)) {
-                    f.updateBytes(getDefinedSymbol(loc));
-                    myFutureReferences.remove(i);
-                }
-            }
+            handleLocation(loc, op.equals("EQU"), address);
         }
 
         if (Constants.COMMANDS.containsKey(op)) {
@@ -115,21 +89,15 @@ public class Assembler {
 
             myCounter++;
             return w;
-        }
-
-        else if (op.equals("EQU")) {
+        } else if (op.equals("EQU")) {
             return null;
-        }
-
-        else if (op.equals("ORIG")) {
+        } else if (op.equals("ORIG")) {
             if (!isWValue(address)) {
                 throw new IllegalArgumentException("Rule 11c. The ADDRESS should be a WValue.");
             }
             myCounter = evaluateWValue(address).getValue();
             return null;
-        }
-
-        else if (op.equals("CON")) {
+        } else if (op.equals("CON")) {
             if (!isWValue(address)) {
                 throw new IllegalArgumentException("Rule 11d. The ADDRESS should be a WValue.");
             }
@@ -139,11 +107,9 @@ public class Assembler {
             myCounter++;
 
             return w;
-        }
-
-        else if (op.equals("ALF")) {
+        } else if (op.equals("ALF")) {
             Byte[] word = new Byte[5];
-            for(int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                 word[i] = new Byte(Constants.CHARACTER_CODE.get(address.charAt(i)));
             }
 
@@ -152,9 +118,7 @@ public class Assembler {
 
             myCounter++;
             return w;
-        }
-
-        else if (op.equals("END")) {
+        } else if (op.equals("END")) {
             if (!isWValue(address)) {
                 throw new IllegalArgumentException("Rule 11f. The ADDRESS must be a W-value, which " +
                         "specifies in its (4:5) field the location of the instruction" +
@@ -167,13 +131,45 @@ public class Assembler {
             while (!myFutureReferences.isEmpty()) {
                 assemble(myFutureReferences.get(0).getConLine());
             }
-            myCounter = evaluateWValue(address).getValueByField(4*8+5);
+            myCounter = evaluateWValue(address).getValueByField(4 * 8 + 5);
             return null;
-        }
-
-        else {
+        } else {
             throw new IllegalArgumentException("Rule 11. OP is not among the" +
                     "six possibilities defined on page 155.");
+        }
+    }
+
+    public void handleLocation(String loc, boolean isEQU, String address) {
+        // Add as a defined symbol
+        // If isEnd, the machine generates
+        // its own symbol names.
+        if (!isSymbol(loc) && !isEnd) {
+            throw new IllegalArgumentException("Rule 1: A symbol is a string of one to ten " +
+                    "letters/digits, containing at least one letter.");
+        }
+        if (isLocalFutureReference(loc) || isLocalDefinedSymbol(loc)) {
+            throw new IllegalArgumentException(loc + " may not occur in the LOC field.");
+        }
+
+        // EQU has precedence
+        if (!isEQU) {
+            addDefinedSymbol(loc, getCounter());
+        } else {
+            // Process address field
+            if (!isWValue(address)) {
+                throw new IllegalArgumentException("Rule 11b. The ADDRESS should be a WValue.");
+            }
+            int val = evaluateWValue(address).getValue();
+            addDefinedSymbol(loc, val);
+        }
+
+        String toSearch = isLocalSymbol(loc) ? loc.charAt(0) + "F" : loc;
+        for (int i = myFutureReferences.size() - 1; i >= 0; i--) {
+            FutureReference f = myFutureReferences.get(i);
+            if (f.getName().equals(toSearch)) {
+                f.updateBytes(getDefinedSymbol(loc));
+                myFutureReferences.remove(i);
+            }
         }
     }
 
@@ -217,6 +213,7 @@ public class Assembler {
     /**
      * Tokenize the address assuming the format of "A, I(F)". This method should
      * return the list {"A", ",I", "(F)"}.
+     *
      * @param addr is the address to tokenize.
      * @return the tokens.
      */
@@ -247,6 +244,7 @@ public class Assembler {
 
     /**
      * Gets the counter.
+     *
      * @return the counter.
      */
     public int getCounter() {
@@ -255,6 +253,7 @@ public class Assembler {
 
     /**
      * Gets the memory at given index.
+     *
      * @param index to retrieve memory.
      * @return memory as a Word.
      */
@@ -263,9 +262,18 @@ public class Assembler {
     }
 
     /**
+     * Get the memory.
+     * @return the memory.
+     */
+    public Word[] getMemory() {
+        return myMemory;
+    }
+
+    /**
      * Returns whether a symbol is valid or not. A symbol is a
      * string of one to ten letters and /or digits, containing at
      * least one letter.
+     *
      * @param name of symbol.
      * @return true or false.
      */
@@ -278,7 +286,7 @@ public class Assembler {
         // Check each character and ensure at least one letter
         boolean hasLetter = false;
 
-        for (int i = 0 ; i < name.length(); i++){
+        for (int i = 0; i < name.length(); i++) {
             if (Character.isLetter(name.charAt(i))) {
                 hasLetter = true;
             } else if (!Character.isDigit(name.charAt(i))) {
@@ -292,6 +300,7 @@ public class Assembler {
 
     /**
      * Returns whether number is a string of one to ten digits.
+     *
      * @param number is a string.
      * @return whether it is a number.
      */
@@ -311,6 +320,7 @@ public class Assembler {
 
     /**
      * Parses number into int.
+     *
      * @param number is a string.
      * @return the integer equivalent.
      */
@@ -320,6 +330,7 @@ public class Assembler {
 
     /**
      * Return the defined symbol associated with name.
+     *
      * @param name of defined symbol
      * @return value of defined symbol.
      */
@@ -328,12 +339,15 @@ public class Assembler {
     }
 
     /**
-     * Adds the defined symbol with value to the map.
-     * @param name of symbol to add.
+     * Adds the defined symbol with value to the map. Throws
+     * an error if one tries to redefine a symbol unless
+     * it is a local symbol.
+     *
+     * @param name  of symbol to add.
      * @param value of defined symbol.
      */
     public void addDefinedSymbol(String name, int value) {
-        if (myDefinedSymbols.containsKey(name)) {
+        if (!isLocalSymbol(name) && myDefinedSymbols.containsKey(name)) {
             throw new IllegalArgumentException("Rule 13. Each symbol has one and only one " +
                     "equivalent value.");
         }
@@ -342,6 +356,7 @@ public class Assembler {
 
     /**
      * Tests if name is a defined symbol.
+     *
      * @param name is a symbol.
      * @return true or false.
      */
@@ -355,22 +370,26 @@ public class Assembler {
 
     /**
      * Tests is given string is an atomic expression.
+     *
      * @param expr is the given string.
      * @return true or false.
      */
     public boolean isAtomicExpression(String expr) {
-        return isNumber(expr) || isDefinedSymbol(expr) ||
-                isAsterisk(expr);
+        return isNumber(expr) || isLocalDefinedSymbol(expr) ||
+                (isDefinedSymbol(expr) && !isLocalSymbol(expr)) || isAsterisk(expr);
     }
 
     /**
      * Parses given atomic expression and returns its value.
+     *
      * @param expr is the given string.
      * @return true or false.
      */
     public int parseAtomicExpression(String expr) {
         if (isNumber(expr)) {
             return parseNumber(expr);
+        } else if (isLocalDefinedSymbol(expr)) {
+            return getDefinedSymbol(expr.charAt(0) + "H");
         } else if (isDefinedSymbol(expr)) {
             return getDefinedSymbol(expr);
         } else if (isAsterisk(expr)) {
@@ -392,8 +411,9 @@ public class Assembler {
 
     /**
      * Returns val1 (op) val2, where op is the operator given by the string.
+     *
      * @param val1 is the first operand.
-     * @param op is the operator.
+     * @param op   is the operator.
      * @param val2 is the second operand.
      * @return the result.
      */
@@ -426,6 +446,7 @@ public class Assembler {
 
     /**
      * Determines if the given string is a valid expression or not.
+     *
      * @param expr is the expression.
      * @return true or false.
      */
@@ -445,7 +466,7 @@ public class Assembler {
 
         // Find position of operator
         int i = expr.length() - 2;
-        while(!isBinaryOperation(expr.substring(i, i + 1))) {
+        while (!isBinaryOperation(expr.substring(i, i + 1))) {
             i--;
             if (i < 0) {
                 return false;
@@ -463,20 +484,19 @@ public class Assembler {
     /**
      * Parses and evaluates expression with the assumption
      * that the string is a valid expression.
+     *
      * @param expr is the expression to be evaluated.
      * @return the value associated with the expression.
      */
     public int evaluateExpression(String expr) {
         if (isAtomicExpression(expr)) {
             return parseAtomicExpression(expr);
-        }
-        else if (isSign(expr.charAt(0)) && isAtomicExpression(expr.substring(1))) {
+        } else if (isSign(expr.charAt(0)) && isAtomicExpression(expr.substring(1))) {
             return getSign(expr.charAt(0)) * parseAtomicExpression(expr.substring(1));
-        }
-        else {
+        } else {
             // Find position of operator
             int i = expr.length() - 2;
-            while(!isBinaryOperation(expr.substring(i, i + 1))) i--;
+            while (!isBinaryOperation(expr.substring(i, i + 1))) i--;
             int j = i + 1;
             if (isBinaryOperation(expr.substring(i - 1, i)) &&
                     expr.substring(i - 1, i + 1).equals("//")) i--;
@@ -488,14 +508,14 @@ public class Assembler {
 
     /**
      * Given a string, we interpret it as an APart.
+     *
      * @param str is string to process.
      * @return the Word with the APart within the +AA fields.
      */
     public Word processAPart(String str) {
         if (str.equals("")) {
             return new Word();
-        }
-        else if (isExpression(str)) {
+        } else if (isExpression(str)) {
             Word w = new Word();
             int eval = evaluateExpression(str);
 
@@ -504,22 +524,19 @@ public class Assembler {
             w.setByte(2, Math.abs(eval) % 64);
 
             return w;
-        }
-        else if (isSymbol(str)) {
+        } else if (isSymbol(str) && !isLocalSymbol(str)) {
             // Handle future reference
             Word w = new Word(str);
             myFutureReferences.add(w.getFutureReference());
             return w;
-        }
-        else if (isLiteralConstant(str)) {
+        } else if (isLiteralConstant(str)) {
             // Handle Literal Constant
             String name = "$" + myLiteralConstants.size();
             Word w = new Word(name);
             myLiteralConstants.add(w.getLiteralConstant(str.substring(1, str.length() - 1)));
             myFutureReferences.add(w.getFutureReference());
             return w;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Rule 6: An A-Part must be either " +
                     "vacuous, an expression, a future reference, or a literal constant.");
         }
@@ -528,11 +545,9 @@ public class Assembler {
     public int processIndexPart(String str) {
         if (str.equals("")) {
             return 0;
-        }
-        else if (str.charAt(0) == ',' && isExpression(str.substring(1))) {
+        } else if (str.charAt(0) == ',' && isExpression(str.substring(1))) {
             return evaluateExpression(str.substring(1));
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Rule 7: An index part must be either " +
                     "vacuous or a comma followed by an expression.");
         }
@@ -541,12 +556,10 @@ public class Assembler {
     public int processFPart(String str, int defaultField) {
         if (str.equals("")) {
             return defaultField;
-        }
-        else if (str.charAt(0) == '(' && str.charAt(str.length() - 1) == ')' &&
+        } else if (str.charAt(0) == '(' && str.charAt(str.length() - 1) == ')' &&
                 isExpression(str.substring(1, str.length() - 1))) {
             return evaluateExpression(str.substring(1, str.length() - 1));
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Rule 8: An F-part is either vacuous " +
                     "or an expression enclosed in parenthesis.");
         }
@@ -555,12 +568,10 @@ public class Assembler {
     public boolean isFPart(String str) {
         if (str.equals("")) {
             return true;
-        }
-        else if (str.charAt(0) == '(' && str.charAt(str.length() - 1) == ')' &&
+        } else if (str.charAt(0) == '(' && str.charAt(str.length() - 1) == ')' &&
                 isExpression(str.substring(1, str.length() - 1))) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -573,6 +584,7 @@ public class Assembler {
 
     /**
      * Determines whether the string val is a WValue or not.
+     *
      * @param val is the string to be parsed.
      * @return is true or false.
      */
@@ -582,12 +594,11 @@ public class Assembler {
         }
         // Find index
         int i = 0;
-        while(i < val.length() && val.charAt(i) != '(') i++;
+        while (i < val.length() && val.charAt(i) != '(') i++;
 
         if (isExpression(val.substring(0, i)) && isFPart(val.substring(i))) {
             return true;
-        }
-        else {
+        } else {
             int j = val.length() - 1;
             while (j >= 0 && val.charAt(j) != ',') j--;
             return j > -1 && isWValue(val.substring(0, j)) &&
@@ -597,6 +608,7 @@ public class Assembler {
 
     /**
      * Evaluates a wval string into a Word.
+     *
      * @param val is the wval to be processed.
      * @return the Word that is the evaluation of the WValue.
      */
@@ -625,13 +637,13 @@ public class Assembler {
     }
 
     public boolean isLocalSymbol(String sym) {
-         return sym.length() == 2 &&
+        return sym.length() == 2 &&
                 Character.isDigit(sym.charAt(0)) &&
                 sym.charAt(1) == 'H';
     }
 
     public boolean isLocalFutureReference(String sym) {
-         return sym.length() == 2 &&
+        return sym.length() == 2 &&
                 Character.isDigit(sym.charAt(0)) &&
                 sym.charAt(1) == 'F';
     }

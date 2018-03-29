@@ -67,7 +67,7 @@ public class TestAssembler {
         Word expected12 = new Word(true, 26, 16, 19, 13, 4);
         assertEquals(expected11, actual11);
         assertEquals(expected12, actual12);
-/*
+
         // Local symbols test
         counter = asm.getCounter();
         Word actual21 = asm.assemble("   NOP 2F");
@@ -80,7 +80,32 @@ public class TestAssembler {
         assertEquals(expected21, actual21);
         assertEquals(expected22, actual22);
         assertEquals(expected23, actual23);
-*/
+
+        // Expect failures for the following
+        boolean failed = false;
+        try {
+            asm.assemble("   NOP 2H");
+        } catch(Exception e) {
+            failed = true;
+        }
+        assertTrue(failed);
+
+        failed = false;
+        try {
+            asm.assemble("2B NOP");
+        } catch(Exception e) {
+            failed = true;
+        }
+        assertTrue(failed);
+
+        failed = false;
+        try {
+            asm.assemble("2F NOP");
+        } catch (Exception e) {
+            failed = true;
+        }
+        assertTrue(failed);
+
         // Literal Constants and void Future References test
         asm.assemble(" ORIG 0");
         Word actual13 = asm.assemble("START LDA =1=");
@@ -249,6 +274,7 @@ public class TestAssembler {
         Assembler asm = new Assembler();
         asm.addDefinedSymbol("HELLO", 32);
         asm.addDefinedSymbol("WORLD", 24);
+        asm.addDefinedSymbol("2H", 12);
 
         // Successful tests
         String test1 = "HELLO";
@@ -263,6 +289,7 @@ public class TestAssembler {
         int expected2 = 24;
         assertEquals(expected2, actual2);
 
+
         String test3 = "12345";
         assertTrue(asm.isAtomicExpression(test3));
         int actual3 = asm.parseAtomicExpression(test3);
@@ -275,12 +302,19 @@ public class TestAssembler {
         int expected4 = 0;
         assertEquals(expected4, actual4);
 
+        String test5 = "2B";
+        assertTrue(asm.isAtomicExpression(test5));
+        int actual5 = asm.parseAtomicExpression(test5);
+        int expected5 = 12;
+        assertEquals(expected5, actual5);
+
         // Unsuccessful Tests
         assertFalse(asm.isAtomicExpression("HELLOWORLD"));
         assertFalse(asm.isAtomicExpression("1+1"));
         assertFalse(asm.isAtomicExpression("***"));
         assertFalse(asm.isAtomicExpression(""));
-
+        assertFalse(asm.isAtomicExpression("2H"));
+        assertFalse(asm.isAtomicExpression("2F"));
     }
 
     @Test
