@@ -10,7 +10,7 @@ public class TestWord {
     }
 
     @Test
-    public void TestIsValidField() {
+    public void testIsValidField() {
         for (int i = 0; i < 64; i++) {
             int left = i / 8;
             int right = i % 8;

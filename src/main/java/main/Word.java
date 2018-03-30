@@ -106,10 +106,6 @@ public class Word {
                 + " " + myBytes[4];
     }
 
-    public boolean isFuture() {
-        return isFuture;
-    }
-
     /**
      * getValue()
      *
@@ -215,14 +211,65 @@ public class Word {
         int left = field / 8;
         int right = field % 8;
         int value = 0;
+        int sign = 1;
+
+        if (left == 0) {
+            sign = mySign.getSign() ? 1 : -1;
+            left++;
+        }
+
         for (int i = left; i <= right; i++) {
             value *= 64;
             value += getByte(i);
         }
 
-        if (left == 0) {
-            value = (mySign.getSign() ? 1 : -1) * value;
+        return sign * value;
+    }
+
+    public int getAddress() {
+        return getValueByField(2);
+    }
+
+    public int getIndex() {
+        return getByte(3);
+    }
+
+    public int getCommand() {
+        return getByte(5);
+    }
+
+    public int getField() {
+        return getByte(4);
+    }
+
+    public static Word add(Word w1, Word w2) {
+        int sum = w1.getValue() + w2.getValue();
+        Word w = new Word(sum);
+        if (sum == 0) {
+            w.setSign(w1.getSign());
         }
-        return value;
+        return w;
+    }
+
+    public static Word negate(Word w) {
+        w = new Word(w);
+        w.setSign(!w.getSign());
+        return w;
+    }
+
+    public static Word multiply(Word w1, Word w2) {
+        int prod = (w1.getValue() * w2.getValue()) % (64 * 64 * 64 * 64 * 64);
+        boolean sign = w1.getSign() == w2.getSign();
+        Word w = new Word(prod);
+        w.setSign(sign);
+        return w;
+    }
+
+    public static Word upperMultiply(Word w1, Word w2) {
+        long prod = ((long) w1.getValue() * (long) w2.getValue()) / (64 * 64 * 64 * 64 * 64);
+        boolean sign = w1.getSign() == w2.getSign();
+        Word w = new Word((int) prod);
+        w.setSign(sign);
+        return w;
     }
 }

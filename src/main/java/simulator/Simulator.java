@@ -37,7 +37,63 @@ public class Simulator {
     }
 
     public void run(Word inst) {
+        int C = inst.getCommand();
+        int F = inst.getField();
+        int index = inst.getIndex();
+        int offset = index == 0 ? 0 : getIndexRegister(index).getValue();
+        int M = inst.getAddress() + offset;
+        Word V = getV(M, F);
 
+        // Arithmetic
+        if (C == 1) {
+            Word rA = getRegisterA().getWord();
+            getRegisterA().setWord(Word.add(rA, V));
+        }
+        if (C == 2) {
+            Word rA = getRegisterA().getWord();
+            getRegisterA().setWord(Word.add(rA, Word.negate(V)));
+        }
+        if (C == 3) {
+            Word rA = getRegisterA().getWord();
+            getRegisterA().setWord(Word.upperMultiply(rA, V));
+            getRegisterX().setWord(Word.multiply(rA, V));
+        }
+
+        // Load
+        if (C == 8) {
+            load(getRegisterA(), M, F, false);
+        }
+        if (9 <= C && C <= 14) {
+            load(getIndexRegister(C - 8), M, F, false);
+        }
+        if (C == 15) {
+            load(getRegisterX(), M, F, false);
+        }
+        if (C == 16) {
+            load(getRegisterA(), M, F, true);
+        }
+        if (17 <= C && C <= 22) {
+            load(getIndexRegister(C - 16), M, F, true);
+        }
+        if (C == 23) {
+            load(getRegisterX(), M, F, true);
+        }
+        // Store
+        if (C == 24) {
+            store(getRegisterA(), M, F);
+        }
+        if (25 <= C && C <= 30) {
+            store(getIndexRegister(C - 24), M, F);
+        }
+        if (C == 31) {
+            store(getRegisterX(), M, F);
+        }
+        if (C == 32) {
+            store(getJumpRegister(), M, F);
+        }
+        if (C == 33) {
+            setMemory(M, new Word());
+        }
     }
 
 
@@ -93,27 +149,15 @@ public class Simulator {
         myMemory[index] = new Word(w);
     }
 
-    /**
-     * Loads a Word in memory into the Register
-     * @param reg is the register.
-     * @param m is the location to be loaded.
-     * @param field is the field specification.
-     */
-    public void load(Register reg, int m, int field, boolean isNegative) {
+
+    public Word getV(int m, int field) {
         int left = field / 8;
         int right = field % 8;
         Word wordToLoad = getMemory(m);
-
+        Word toReturn = new Word();
         if (left == 0) {
-            reg.setSign(wordToLoad.getSign());
+            toReturn.setSign(wordToLoad.getSign());
             left++;
-        }
-        else {
-            reg.setSign(true);
-        }
-
-        if (isNegative) {
-            reg.setSign(!reg.getSign());
         }
 
         // Set indices
@@ -121,16 +165,31 @@ public class Simulator {
         int j = right;
 
         while (j >= left) {
-            reg.setByte(i, wordToLoad.getByte(j));
+            toReturn.setByte(i, wordToLoad.getByte(j));
             j--;
             i--;
         }
 
-        // Zero out the rest
-        while (i > 0) {
-            reg.setByte(i, 0);
-            i--;
+        return toReturn;
+    }
+
+
+    /**
+     * Loads a Word in memory into the Register
+     * @param reg is the register.
+     * @param m is the location to be loaded.
+     * @param field is the field specification.
+     */
+
+
+    public void load(Register reg, int m, int field, boolean isNegative) {
+        Word w = getV(m, field);
+
+        if (isNegative) {
+            w.setSign(!w.getSign());
         }
+
+        reg.setWord(w);
     }
 
     /**
@@ -140,17 +199,19 @@ public class Simulator {
      * @param field is the field specification.
      */
     public void store(Register reg, int m, int field) {
+        int left = field / 8;
+        int right = field % 8;
 
-    }
+        if (left == 0) {
+            myMemory[m].setSign(reg.getSign());
+            left++;
+        }
 
-    /**
-     * Applies arithmetic.
-     * @param op is one of 1, 2, 3, 4, which corresponds to ADD, SUB, MUL, DIV, resp.
-     * @param m
-     * @param field
-     */
-    public void arithmetic(int op, int m, int field) {
-
+        int j = 5;
+        for (int i = right; i >= left; i--) {
+            myMemory[m].setByte(i, reg.getByte(j));
+            j--;
+        }
     }
 
     /**
@@ -158,7 +219,7 @@ public class Simulator {
      * @param reg the register
      * @param m
      */
-    public void enter(Register reg, int m) {
+    public void enter(Register reg, boolean sign, int m, boolean isNegative) {
 
     }
 

@@ -5,6 +5,9 @@ import main.Word;
 
 import static org.junit.Assert.*;
 
+/*
+TODO: Add tests with ENTA -0.
+ */
 public class TestAssembler {
     @Test
     public void testAssemble() {

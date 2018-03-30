@@ -8,13 +8,11 @@ import main.Byte;
 import main.Pair;
 
 /**
- * <b>Assemble class.</b> This implementation of MIX consists of three
+ * <b>Assembler class.</b> This implementation of MIX consists of three
  * components: the assembler, the debugger, and the simulator. This class acts
  * to perform the operations of the assembler. In order to use this class, an
  * instance of an assembler must be created first using the constructor, and
  * then the assemble method must be run on each individual line.
- * <p>
- * TODO: Implement Locals
  *
  * @author Tae Hyung Kim
  */
