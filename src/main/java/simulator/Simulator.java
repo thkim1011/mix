@@ -13,6 +13,8 @@ public class Simulator {
 
     private boolean myOverflowToggle;
     private int myComparisonIndicator;
+    private int myCounter;
+    private boolean isHalted;
 
     private IODevice[] myDevices;
 
@@ -27,6 +29,7 @@ public class Simulator {
 
         rJ = new JumpRegister();
 
+
         myMemory = new Word[4000];
         for (int i = 0; i < 4000; i++) {
             myMemory[i] = new Word();
@@ -34,6 +37,12 @@ public class Simulator {
 
         myOverflowToggle = false;
         myComparisonIndicator = 0;
+        myCounter = 0;
+        isHalted = false;
+
+        myDevices = new IODevice[21];
+
+        myDevices[18] = new LinePrinter();
     }
 
     public void run(Word inst) {
@@ -42,21 +51,59 @@ public class Simulator {
         int index = inst.getIndex();
         int offset = index == 0 ? 0 : getIndexRegister(index).getValue();
         int M = inst.getAddress() + offset;
-        Word V = getV(M, F);
+        myCounter++;
 
         // Arithmetic
         if (C == 1) {
+            Word V = getV(M, F);
             Word rA = getRegisterA().getWord();
             getRegisterA().setWord(Word.add(rA, V));
         }
         if (C == 2) {
+            Word V = getV(M, F);
             Word rA = getRegisterA().getWord();
             getRegisterA().setWord(Word.add(rA, Word.negate(V)));
         }
         if (C == 3) {
+            Word V = getV(M, F);
             Word rA = getRegisterA().getWord();
             getRegisterA().setWord(Word.upperMultiply(rA, V));
             getRegisterX().setWord(Word.multiply(rA, V));
+        }
+
+        if (C == 4) {
+            Word V = getV(M, F);
+            Word rA = getRegisterA().getWord();
+            Word rX = getRegisterX().getWord();
+            int val = rA.getValue() * 64 * 64 * 64 * 64 * 64 + rX.getValue();
+            int quotient = val / V.getValue();
+            int remainder = val % V.getValue();
+            getRegisterA().setWord(new Word(quotient));
+            getRegisterX().setWord(new Word(remainder));
+        }
+
+        // Special
+        if (C == 5) {
+            if (F == 0) {
+                
+            }
+            if (F == 1) {
+                Integer number = getRegisterA().getValue();
+                String strNum = number.toString();
+                strNum = "0000000000" + strNum;
+                int i = strNum.length() - 1;
+                for (int j = 5; j > 0; j--) {
+                    getRegisterX().setByte(j, 30 + strNum.charAt(i) - '0');
+                    i--;
+                }
+                for (int j = 5; j > 0; j--) {
+                    getRegisterA().setByte(j, 30 + strNum.charAt(i) - '0');
+                    i--;
+                }
+            }
+            if (F == 2) {
+                isHalted = true;
+            }
         }
 
         // Load
@@ -94,11 +141,113 @@ public class Simulator {
         if (C == 33) {
             setMemory(M, new Word());
         }
+
+        // IO
+        if (C == 37) {
+            for (int i = M; i < M + myDevices[F].getBlockSize(); i++) {
+                myDevices[F].printWord(getMemory(i));
+            }
+            System.out.println("");
+        }
+
+        // Jump
+        if (C == 39) {
+            if (F == 0 ||
+                    (F == 2 && myOverflowToggle) ||
+                    (F == 3 && !myOverflowToggle) ||
+                    (F == 4 && myComparisonIndicator == -1) ||
+                    (F == 5 && myComparisonIndicator == 0) ||
+                    (F == 6 && myComparisonIndicator == 1) ||
+                    (F == 7 && !(myComparisonIndicator == -1)) ||
+                    (F == 8 && !(myComparisonIndicator == 0)) ||
+                    (F == 9 && !(myComparisonIndicator == 1))) {
+                getJumpRegister().setWord(new Word(myCounter));
+                myCounter = M;
+            }
+            if (F == 1) {
+                myCounter = M;
+            }
+        }
+
+        if (C == 40) {
+            jump(getRegisterA(), M, F);
+        }
+
+        if (41 <= C && C <= 46) {
+            jump(getIndexRegister(C - 40), M, F);
+        }
+
+        if (C == 47) {
+            jump(getRegisterX(), M, F);
+        }
+
+        if (C == 48) {
+            if (F == 0) {
+                increment(getRegisterA(), M);
+            }
+            if (F == 1) {
+                decrement(getRegisterA(), M);
+            }
+            if (F == 2) {
+                enter(getRegisterA(), M, false);
+            }
+            if (F == 3) {
+                enter(getRegisterA(), M, true);
+            }
+        }
+        if (49 <= C && C <= 54) {
+            if (F == 0) {
+                increment(getIndexRegister(C - 48), M);
+            }
+            if (F == 1) {
+                decrement(getIndexRegister(C - 48), M);
+            }
+            if (F == 2) {
+                enter(getIndexRegister(C - 48), M, false);
+            }
+            if (F == 3) {
+                enter(getIndexRegister(C - 48), M, true);
+            }
+        }
+        if (C == 55) {
+            if (F == 0) {
+                increment(getRegisterX(), M);
+            }
+            if (F == 1) {
+                decrement(getRegisterX(), M);
+            }
+            if (F == 2) {
+                enter(getRegisterX(), M, false);
+            }
+            if (F == 3) {
+                enter(getRegisterX(), M, true);
+            }
+        }
+
+        // Compare
+        if (C == 56) {
+            compare(getRegisterA(), M, F);
+        }
+        if (57 <= C && C <= 62) {
+            compare(getIndexRegister(C - 56), M, F);
+        }
+        if (C == 63) {
+            compare(getRegisterX(), M, F);
+        }
+    }
+
+    public void run(Word[] program, int initial) {
+        myCounter = initial;
+        myMemory = program;
+        while(!isHalted) {
+            run(program[myCounter]);
+        }
     }
 
 
     /**
      * Get the A register.
+     *
      * @return the register.
      */
     public Register getRegisterA() {
@@ -107,6 +256,7 @@ public class Simulator {
 
     /**
      * Get the X register.
+     *
      * @return the register.
      */
     public Register getRegisterX() {
@@ -116,6 +266,7 @@ public class Simulator {
     /**
      * Get the Ii register. Note that these registers are
      * indexed by 1.
+     *
      * @param i the register number.
      * @return the register.
      */
@@ -125,6 +276,7 @@ public class Simulator {
 
     /**
      * Get the jump register.
+     *
      * @return the register.
      */
     public Register getJumpRegister() {
@@ -133,6 +285,7 @@ public class Simulator {
 
     /**
      * Get Word at memory address index.
+     *
      * @param index is the address.
      * @return the Word.
      */
@@ -142,8 +295,9 @@ public class Simulator {
 
     /**
      * Set Word at memory address index.
+     *
      * @param index is the address.
-     * @param w is the word to be set.
+     * @param w     is the word to be set.
      */
     public void setMemory(int index, Word w) {
         myMemory[index] = new Word(w);
@@ -176,8 +330,9 @@ public class Simulator {
 
     /**
      * Loads a Word in memory into the Register
-     * @param reg is the register.
-     * @param m is the location to be loaded.
+     *
+     * @param reg   is the register.
+     * @param m     is the location to be loaded.
      * @param field is the field specification.
      */
 
@@ -194,8 +349,9 @@ public class Simulator {
 
     /**
      * Stores a Word in the register into memory.
-     * @param reg is the register.
-     * @param m is the address where the Word will be stored.
+     *
+     * @param reg   is the register.
+     * @param m     is the address where the Word will be stored.
      * @param field is the field specification.
      */
     public void store(Register reg, int m, int field) {
@@ -216,32 +372,56 @@ public class Simulator {
 
     /**
      * Enters the value M into the register.
+     *
      * @param reg the register
      * @param m
      */
-    public void enter(Register reg, boolean sign, int m, boolean isNegative) {
-
+    public void enter(Register reg, int m, boolean isNegative) {
+        Word w = new Word(m);
+        if (isNegative) {
+            w.setSign(!w.getSign());
+        }
+        reg.setWord(w);
     }
 
     /**
-     *
      * @param reg
      * @param m
      */
     public void increment(Register reg, int m) {
-
+        Word w = new Word(m);
+        reg.setWord(Word.add(reg.getWord(), w));
     }
 
     public void decrement(Register reg, int m) {
-
+        Word w = new Word(m);
+        reg.setWord(Word.add(reg.getWord(), Word.negate(w)));
     }
 
     public void compare(Register reg, int m, int field) {
-
+        int regVal = reg.getWord().getValueByField(field);
+        int contents = getMemory(m).getValueByField(field);
+        if (regVal > contents) {
+            myComparisonIndicator = 1;
+        }
+        if (regVal == contents) {
+            myComparisonIndicator = 0;
+        }
+        if (regVal < contents) {
+            myComparisonIndicator = -1;
+        }
     }
 
-    public void jump() {
-
+    public void jump(Register reg, int m, int field) {
+        if ((field == 0 && reg.getValue() < 0) ||
+                (field == 1 && reg.getValue() == 0) ||
+                (field == 2 && reg.getValue() > 0) ||
+                (field == 3 && reg.getValue() >= 0) ||
+                (field == 4 && reg.getValue() != 0) ||
+                (field == 5 && reg.getValue() <= 0)) {
+            getJumpRegister().setWord(new Word(myCounter));
+            myCounter = m;
+        }
     }
 
     public void shift(Register reg) {

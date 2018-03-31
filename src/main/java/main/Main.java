@@ -1,6 +1,7 @@
 package main;
 
 import assembler.Assembler;
+import simulator.Simulator;
 
 import java.io.*;
 
@@ -40,7 +41,27 @@ public class Main {
         }
 
         else if (args[0].equals("--simulate") || args[0].equals("-s")) {
+            Assembler asm = new Assembler();
+            Simulator sim = new Simulator();
+            FileReader fr = new FileReader(args[1]);
+            BufferedReader in = new BufferedReader(fr);
 
+            String line;
+            // MEMORY
+            while(true) {
+                line = in.readLine();
+                if (line == null) {
+                    break;
+                }
+                if (!line.equals("") && line.charAt(0) != '*') {
+                    asm.assemble(line);
+                }
+            }
+
+            sim.run(asm.getMemory(), asm.getCounter());
+
+            fr.close();
+            in.close();
         }
     }
 }

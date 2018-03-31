@@ -6,6 +6,9 @@ import java.util.Map;
 public class Constants {
 	public final static Map<String, Pair> COMMANDS = makeCommands();
 	public final static Map<Character, Integer> CHARACTER_CODE = makeCharacterCode();
+	public final static char[] CHARACTERS = {' ', 'A', 'B', 'C', 'D', 'E',
+	'F', 'G', 'H', 'I', ' ', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', ' ', ' ', 'S', 'T', 'U', 'V', 'W',
+	'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '(', ')', '+', '-', '*', '/', '=', '$', '<', '>', '@', ';', ':', '\''};
 
 	private static Map<String, Pair> makeCommands() {
         Map<String, Pair> commands = new HashMap<>();

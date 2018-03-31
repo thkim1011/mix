@@ -265,6 +265,20 @@ public class TestSimulator {
 
     @Test
     public void testEnter() {
+        // Set up
+        Assembler asm = new Assembler();
+        Simulator sim = new Simulator();
+        Register rA = sim.getRegisterA();
+        Register rI1 = sim.getIndexRegister(1);
+        Register rX = sim.getRegisterX();
 
+        // General Tests
+        sim.enter(rA, 123, false);
+        Word actual1 = rA.getWord();
+        Word expected1 = new Word(true, 0, 0, 0, 1, 59);
+        assertEquals(expected1, actual1);
+
+        // Edge Cases
+        // TODO: Figure out whether I should account for +0 vs -0.
     }
 }

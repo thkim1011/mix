@@ -10,4 +10,10 @@ public class TestMain {
         String[] args = {"-a", "src/test/resources/table-of-primes.asm"};
         // Main.main(args);
     }
+
+    @Test
+    public void testSimulator() throws IOException {
+        String[] args = {"-s", "src/test/resources/table-of-primes.asm"};
+        Main.main(args);
+    }
 }
