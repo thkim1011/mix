@@ -1,6 +1,10 @@
 package simulator;
 
 import main.Word;
+import simulator.io.IODevice;
+import simulator.io.InputDevice;
+import simulator.io.LinePrinter;
+import simulator.io.OutputDevice;
 
 public class Simulator {
 
@@ -85,10 +89,21 @@ public class Simulator {
         // Special
         if (C == 5) {
             if (F == 0) {
-                
+                Word wA = getRegisterA().getWord();
+                Word wX = getRegisterX().getWord();
+                int val = 0;
+                for (int i = 1; i <= 5; i++) {
+                    val = val * 10 + wA.getByte(i) % 10;
+                }
+                for (int i = 1; i <= 5; i++) {
+                    val = val * 10 + wX.getByte(i) % 10;
+                }
+                boolean sign = getRegisterA().getSign();
+                getRegisterA().setWord(new Word(val));
+                getRegisterA().setSign(sign);
             }
             if (F == 1) {
-                Integer number = getRegisterA().getValue();
+                Integer number = Math.abs(getRegisterA().getValue());
                 String strNum = number.toString();
                 strNum = "0000000000" + strNum;
                 int i = strNum.length() - 1;
@@ -106,6 +121,14 @@ public class Simulator {
             }
         }
 
+        // Move
+        if (C == 7) {
+            int j = getIndexRegister(1).getValue();
+            for (int i = M; i <= M + F; i++) {
+                setMemory(j, getMemory(i));
+                j++;
+            }
+        }
         // Load
         if (C == 8) {
             load(getRegisterA(), M, F, false);
@@ -143,9 +166,14 @@ public class Simulator {
         }
 
         // IO
+        if (C == 36) {
+            for (int i = M; i < M + myDevices[F].getBlockSize(); i++) {
+                setMemory(i, ((InputDevice) myDevices[F]).getWord());
+            }
+        }
         if (C == 37) {
             for (int i = M; i < M + myDevices[F].getBlockSize(); i++) {
-                myDevices[F].printWord(getMemory(i));
+                ((OutputDevice) myDevices[F]).printWord(getMemory(i));
             }
             System.out.println("");
         }

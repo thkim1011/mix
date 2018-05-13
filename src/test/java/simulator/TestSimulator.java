@@ -125,6 +125,26 @@ public class TestSimulator {
         // TODO: Add the other MUL DIV tests.
 
 
+        // Test NUM and CHAR
+        sim.getRegisterA().setWord(new Word(false, 0, 0, 31, 32, 39));
+        sim.getRegisterX().setWord(new Word(true, 37, 57, 47, 30, 30));
+        sim.run(asm.assemble(" NUM 0"));
+        Word actual51 = sim.getRegisterA().getWord();
+        Word expected51 = new Word(-12977700);
+        assertEquals(expected51, actual51);
+
+        sim.run(asm.assemble(" INCA 1"));
+        Word actual52 = sim.getRegisterA().getWord();
+        Word expected52 = new Word(-12977699);
+        assertEquals(expected52, actual52);
+
+        sim.run(asm.assemble(" CHAR 0"));
+        Word actual53 = sim.getRegisterA().getWord();
+        Word actual54 = sim.getRegisterX().getWord();
+        Word expected53 = new Word(false, 30, 30, 31, 32, 39);
+        Word expected54 = new Word(true, 37, 37, 36, 39, 39);
+        assertEquals(expected53, actual53);
+        assertEquals(expected54, actual54);
     }
 
     @Test
