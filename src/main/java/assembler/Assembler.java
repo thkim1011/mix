@@ -132,7 +132,7 @@ public class Assembler {
             myCounter = evaluateWValue(address).getValueByField(4 * 8 + 5);
             return null;
         } else {
-            throw new IllegalArgumentException("Rule 11. OP is not among the" +
+            throw new IllegalArgumentException(line + ": Rule 11. OP is not among the " +
                     "six possibilities defined on page 155.");
         }
     }

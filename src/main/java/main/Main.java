@@ -7,8 +7,15 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        if (args.length != 2) {
-            System.out.println("Must provide two arguments: option and filename");
+        // Handle number of arguments
+        if (args.length == 1) {
+            String temp = args[0];
+            args = new String[2];
+            args[0] = "-s";
+            args[1] = temp;
+        }
+        else if (args.length != 2) {
+            System.out.println("Must provide at least file name.");
             return;
         }
 
@@ -39,7 +46,13 @@ public class Main {
             in.close();
             writer.close();
         }
-
+        else if (args[0].equals("--debug") || args[0].equals("-d")) {
+            Assembler asm = new Assembler();
+            Simulator sim = new Simulator();
+            FileReader fr = new FileReader(args[1]);
+            BufferedReader in = new BufferedReader(fr);
+            // Debugger debug = new Debugger();
+        }
         else if (args[0].equals("--simulate") || args[0].equals("-s")) {
             Assembler asm = new Assembler();
             Simulator sim = new Simulator();

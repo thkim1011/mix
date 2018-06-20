@@ -143,7 +143,6 @@ public class Word {
             throw new IllegalArgumentException("The given position is invalid.");
         }
         myBytes[pos-1] = new Byte(value);
-        // TODO: which is better.. create a new byte or modify the existing?
     }
 
     public void setSign(boolean sign) {
