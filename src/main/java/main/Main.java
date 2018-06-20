@@ -1,9 +1,12 @@
 package main;
 
 import assembler.Assembler;
+import debugger.Debugger;
 import simulator.Simulator;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -21,60 +24,51 @@ public class Main {
 
         if (args[0].equals("--assemble") || args[0].equals("-a")) {
             Assembler asm = new Assembler();
-            FileReader fr = new FileReader(args[1]);
-            BufferedReader in = new BufferedReader(fr);
             PrintWriter writer = new PrintWriter("a.mix", "UTF-8");
 
-            String line;
-            // MEMORY
-            while(true) {
-                line = in.readLine();
-                if (line == null) {
-                    break;
-                }
-                if (!line.equals("") && line.charAt(0) != '*') {
-                    asm.assemble(line);
-                }
-            }
+            asm.assemble(getInput(args[1]));
 
             Word[] memory = asm.getMemory();
             for (int i = 0; i < 4000; i++) {
                 writer.println(memory[i].toString());
             }
 
-            fr.close();
-            in.close();
             writer.close();
         }
         else if (args[0].equals("--debug") || args[0].equals("-d")) {
-            Assembler asm = new Assembler();
-            Simulator sim = new Simulator();
-            FileReader fr = new FileReader(args[1]);
-            BufferedReader in = new BufferedReader(fr);
-            // Debugger debug = new Debugger();
+            Debugger debug = new Debugger(getInput(args[1]));
         }
         else if (args[0].equals("--simulate") || args[0].equals("-s")) {
             Assembler asm = new Assembler();
             Simulator sim = new Simulator();
-            FileReader fr = new FileReader(args[1]);
-            BufferedReader in = new BufferedReader(fr);
 
-            String line;
-            // MEMORY
-            while(true) {
-                line = in.readLine();
-                if (line == null) {
-                    break;
-                }
-                if (!line.equals("") && line.charAt(0) != '*') {
-                    asm.assemble(line);
-                }
-            }
-
+            asm.assemble(getInput(args[1]));
             sim.run(asm.getMemory(), asm.getCounter());
-
-            fr.close();
-            in.close();
         }
+    }
+
+    /**
+     * Gets the program with name fileName from io.
+     * @param fileName is the name of the file.
+     * @return the program without comments as an array of the program lines.
+     * @throws IOException for io.
+     */
+    private static List<String> getInput(String fileName) throws IOException {
+        FileReader fr = new FileReader(fileName);
+        BufferedReader in = new BufferedReader(fr);
+        String line;
+        List<String> program = new ArrayList<>();
+        while(true) {
+            line = in.readLine();
+            if (line == null) {
+                break;
+            }
+            if (!line.equals("") && line.charAt(0) != '*') {
+                program.add(line);
+            }
+        }
+        in.close();
+        fr.close();
+        return program;
     }
 }

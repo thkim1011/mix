@@ -55,7 +55,19 @@ public class Assembler {
     }
 
     /**
+     * Takes in a program as an array of strings and assembles it.
+     * @param program is an array of strings.
+     */
+    public void assemble(List<String> program) {
+        for (String line: program) {
+            assemble(line);
+        }
+    }
+
+    /**
      * Assembles given line of code with the current local defined symbols.
+     * It also saves the word in memory so the output is not completely
+     * necessary.
      *
      * @param line is the line to be assembled.
      * @return the assembled line as a Word.
