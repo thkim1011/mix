@@ -13,7 +13,9 @@ public class TestMain {
 
     @Test
     public void testSimulator() throws IOException {
-        String[] args = {"-s", "src/test/resources/table-of-primes.asm"};
-        Main.main(args);
+        String[] args1 = {"-s", "src/test/resources/hello.asm"};
+        Main.main(args1);
+        String[] args2 = {"-s", "src/test/resources/table-of-primes.asm"};
+        Main.main(args2);
     }
 }

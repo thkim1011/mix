@@ -1,0 +1,3 @@
+#!/bin/bash
+MIX_DIR="$(dirname "${BASH_SOURCE[0]}")"
+java -jar "$MIX_DIR/build/libs/mix.jar -d" $1

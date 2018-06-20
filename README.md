@@ -1,32 +1,71 @@
-# MIX Simulator and Assembler 
+# MIX Assembler, Simulator, and Debugger 
 [![Build Status](https://travis-ci.org/thkim1011/mix.svg?branch=master)](https://travis-ci.org/thkim1011/mix)
 
-## UPDATE March 25, 2018
-I managed to completely clean out the design of the assembler. At the moment, the Assembler class is complete only for MIX operators, although I do need to write more tests. I think I'll be able to finish the Assembler soon enough, and soon I'll be able to work on the Simulator. I'm also working on a UI for this, but I'm not experienced in UI design, so we'll see about that. Anything that follows in the README is old content.
-
-## REBOOT!!!
-Project currently undergoing redesign.
-
-
 ## About
-This is a project I began because I was reading The Art of Computer Programming (I recommend this book for anyone who's interested in both mathematics and computer science). This book, contrary to many other books, use the hypothetical computer called MIX and the assembly language MIXAL associated with it. Upon reading how this computer works in detail, I was pretty amazed because I could finally conceive how a computer works. As a result, I decided to create a simulator and assembler for MIX. This program will provide tools to assemble and load MIXAL programs onto a MIX computer and run these programs. 
-
-## Status
-So far, the assembly process seems to be working very well. I've recently incorporated unit testing into this project, and had to significantly restructure it as a result (I'm very new to the idea of large software), so I was delayed, but now I can get on to the simulator. I'll probably have to run more tests in order to catch all the bugs within the assembly process but it should be mostly good. 
+This is a project I began because I was reading The Art of Computer Programming 
+(I recommend this book for anyone who's interested in both mathematics and computer 
+science). This book, contrary to many other books, use the hypothetical computer
+called MIX and the assembly language MIXAL associated with it. This program will 
+provide tools to assemble and load MIXAL programs onto a MIX computer and run 
+these programs. 
 
 ## Usage
-As of the time or writing, this repository only contains the source. To build the project, use the traditional gradle command `gradle build`. Then in the terminal, type the command `java -cp /path/to/MIX.jar MIX /path/to/MIXAL/file.mixal`. It probably helps to make a batch file if you're using Windows.
 
-## To do
-* Make a simulator.
-* ~~Learn how to use git properly.~~
-* ~~Learn how to use Gradle~~
-* ~~Learn how to use Travis CI~~
-* Work on the unit testing parts.
-* Separate the validation process from the assembling process.
+### Build
+To build the project, just run `gradle build`. The `mix` file in the root directory 
+is a bash script which runs `java -jar /path/to/MIX.jar` with the current directory
+ in mind. Adding the `mix` to path will allow you to run `mix` from any directory. 
 
-## Disclaimer
-When I first started this, I did this off of only knowledge of programming and absolutely no knowledge of assemblers. This may be very unconventionally programmed.
+### Example
+Make a new file in any directory called `hello.asm` with the follwoing code.
+```
+* HELLO WORLD
+PRINTER EQU  18
+START   OUT  HELLO(PRINTER)
+        HLT
+HELLO   ALF  HELLO
+        ALF   WORL
+        ALF  D
+        END  START
+```
+Then run:
+```
+mix hello.asm
+```
+You should see the following output
+```
+HELLO WORLD
+```
+
+### Assembling
+MIX has three modes, one of which is assembly. To simply assemble MIX code, run one of the two:
+```
+mix -a hello.asm
+mix --assemble hello.asm
+```
+This will make a new file called which contains 4000 words divided into a sign and 5 bytes.
+
+### Simulating
+To simulate the MIX code, run one of the three:
+```
+mix hello.asm
+mix -s hello.asm
+mix --simulate hello.asm
+```
+Note that not specifying any option is equivalent to the simulation mode.
+
+
+### Debugging
+To debug MIX code, run one of the three:
+```
+mdb hello.asm
+mix -d hello.asm
+mix --debug hello.asm
+```
+
+## Status
+The assembler is complete, but requires more testing. The simulator is almost finished, 
+but input output is not complete. 
 
 ## LOL
 I'm honestly surprised that I even came this far.
