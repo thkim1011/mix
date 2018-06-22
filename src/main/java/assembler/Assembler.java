@@ -60,7 +60,9 @@ public class Assembler {
      */
     public void assemble(List<String> program) {
         for (String line: program) {
-            assemble(line);
+            if (!line.equals("") && line.charAt(0) != '*') {
+                assemble(line);
+            }
         }
     }
 

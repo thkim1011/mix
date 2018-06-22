@@ -301,4 +301,61 @@ public class TestSimulator {
         // Edge Cases
         // TODO: Figure out whether I should account for +0 vs -0.
     }
+
+    /**
+     * Tests from TAOCP Vol 1 Page 135
+     */
+    @Test
+    public void testShift() {
+        Simulator sim = new Simulator();
+
+        Register regA = sim.getRegisterA();
+        Register regX = sim.getRegisterX();
+
+        regA.setWord(new Word(true, 1, 2, 3, 4, 5));
+        regX.setWord(new Word(false, 6, 7, 8, 9, 10));
+
+        // Test 1
+        sim.shift(1, 3);
+
+        Word expected1 = new Word(true, 0, 1, 2, 3, 4);
+        Word expected2 = new Word(false, 5, 6, 7, 8, 9);
+
+        assertEquals(expected1, regA.getWord());
+        assertEquals(expected2, regX.getWord());
+
+        // Test 2
+        sim.shift(2, 0);
+
+        Word expected3 = new Word(true, 2, 3, 4, 0, 0);
+        Word expected4 = new Word(false, 5, 6, 7, 8, 9);
+
+        assertEquals(expected3, regA.getWord());
+        assertEquals(expected4, regX.getWord());
+
+        // Test 3
+        sim.shift(4, 5);
+
+        Word expected5 = new Word(true, 6, 7, 8, 9, 2);
+        Word expected6 = new Word(false, 3, 4, 0, 0, 5);
+
+        assertEquals(expected5, regA.getWord());
+        assertEquals(expected6, regX.getWord());
+
+        // Test 4
+        sim.shift(2, 1);
+        Word expected7 = new Word(true, 0, 0, 6, 7, 8);
+        Word expected8 = new Word(false, 3, 4, 0, 0, 5);
+
+        assertEquals(expected7, regA.getWord());
+        assertEquals(expected8, regX.getWord());
+
+        // Test 5
+        sim.shift(501, 4);
+        Word expected9 = new Word(true, 0, 6, 7, 8, 3);
+        Word expected10 = new Word(false, 4, 0, 0, 5, 0);
+
+        assertEquals(expected9, regA.getWord());
+        assertEquals(expected10, regX.getWord());
+    }
 }

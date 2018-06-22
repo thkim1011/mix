@@ -5,7 +5,14 @@ import static org.junit.Assert.*;
 
 public class TestWord {
     @Test
-    public void TestApplyWValue() {
+    public void testWord() {
+        // Constructor 2
+        Word actual1 = new Word(123);
+        Word expected1 = new Word(true, 0, 0, 0, 1, 59);
+        assertEquals(expected1, actual1);
+    }
+    @Test
+    public void testApplyWValue() {
 
     }
 

@@ -1,10 +1,7 @@
 package simulator;
 
 import main.Word;
-import simulator.io.IODevice;
-import simulator.io.InputDevice;
-import simulator.io.LinePrinter;
-import simulator.io.OutputDevice;
+import simulator.io.*;
 
 public class Simulator {
 
@@ -46,7 +43,18 @@ public class Simulator {
 
         myDevices = new IODevice[21];
 
+        for (int i = 0; i < 21; i++)
+            myDevices[i] = new TapeUnit(i);
         myDevices[18] = new LinePrinter();
+        myDevices[19] = new TypeWriter();
+    }
+
+    public Simulator(Word[] program, int initial) {
+        this();
+        for (int i = 0; i < 4000; i++) {
+            myMemory[i] = new Word(program[i]);
+        }
+        myCounter = initial;
     }
 
     public void run(Word inst) {
@@ -120,6 +128,10 @@ public class Simulator {
                 isHalted = true;
             }
         }
+        // Shift
+        if (C == 6) {
+            shift(M, F);
+        }
 
         // Move
         if (C == 7) {
@@ -166,6 +178,10 @@ public class Simulator {
         }
 
         // IO
+        // TODO: Implement all IO Devices
+        if (C == 35) {
+            myDevices[F].control(M);
+        }
         if (C == 36) {
             for (int i = M; i < M + myDevices[F].getBlockSize(); i++) {
                 setMemory(i, ((InputDevice) myDevices[F]).getWord());
@@ -264,14 +280,21 @@ public class Simulator {
         }
     }
 
-    public void run(Word[] program, int initial) {
-        myCounter = initial;
-        myMemory = program;
+    public void simulate() {
         while(!isHalted) {
-            run(program[myCounter]);
+            run(myMemory[myCounter]);
         }
     }
 
+    public void closeDevices() {
+        for (int i = 0; i < 21; i++) {
+            myDevices[i].close();
+        }
+    }
+
+    public void simulateNextWord() {
+        run(myMemory[myCounter]);
+    }
 
     /**
      * Get the A register.
@@ -452,12 +475,99 @@ public class Simulator {
         }
     }
 
-    public void shift(Register reg) {
-
+    public void shift(int m, int field) {
+        if (field == 0)  { // SLA
+            Word w = new Word();
+            w.setSign(getRegisterA().getSign());
+            for (int i = m + 1; i <= 5; i++) {
+                w.setByte(i - m, getRegisterA().getByte(i));
+            }
+            getRegisterA().setWord(w);
+        }
+        else if (field == 1) { // SRA
+            Word w = new Word();
+            w.setSign(getRegisterA().getSign());
+            for (int i = 5 - m; i >= 1; i--) {
+                w.setByte(i + m, getRegisterA().getByte(i));
+            }
+            getRegisterA().setWord(w);
+        }
+        else if (field == 2) { // SLAX
+            Word w1 = new Word();
+            Word w2 = new Word();
+            w1.setSign(getRegisterA().getSign());
+            w2.setSign(getRegisterX().getSign());
+            for (int i = m + 1; i <= 10; i--) {
+                setCombinedByte(w1, w2, i - m, getCombinedByte(i));
+            }
+            getRegisterA().setWord(w1);
+            getRegisterX().setWord(w2);
+        }
+        else if (field == 3) { // SRAX
+            Word w1 = new Word();
+            Word w2 = new Word();
+            w1.setSign(getRegisterA().getSign());
+            w2.setSign(getRegisterX().getSign());
+            for (int i = 10 - m; i >= 1; i--) {
+                setCombinedByte(w1, w2, i + m, getCombinedByte(i));
+            }
+            getRegisterA().setWord(w1);
+            getRegisterX().setWord(w2);
+        }
+        else if (field == 4) { // SLC
+            Word w1 = new Word();
+            Word w2 = new Word();
+            w1.setSign(getRegisterA().getSign());
+            w2.setSign(getRegisterX().getSign());
+            for (int i = 1; i <= 10; i++) {
+                setCombinedByte(w1, w2, Math.floorMod(i - m - 1, 10) + 1, getCombinedByte(i));
+            }
+            getRegisterA().setWord(w1);
+            getRegisterX().setWord(w2);
+        }
+        else if (field == 5) {
+            Word w1 = new Word();
+            Word w2 = new Word();
+            w1.setSign(getRegisterA().getSign());
+            w2.setSign(getRegisterX().getSign());
+            for (int i = 1; i <= 10; i++) {
+                setCombinedByte(w1, w2, Math.floorMod(i + m - 1, 10) + 1, getCombinedByte(i));
+            }
+            getRegisterA().setWord(w1);
+            getRegisterX().setWord(w2);
+        }
     }
+
+    public int getCombinedByte(int pos) {
+        if (1 <= pos && pos <= 5) {
+            return getRegisterA().getByte(pos);
+        }
+        else if (6 <= pos && pos <= 10) {
+            return getRegisterX().getByte(pos - 5);
+        }
+        else {
+            throw new IllegalArgumentException("Byte position out of bounds");
+        }
+    }
+
+    public void setCombinedByte(Word w1, Word w2, int pos, int val) {
+        if (1 <= pos && pos <= 5) {
+            w1.setByte(pos, val);
+        }
+        else if (6 <= pos && pos <= 10) {
+            w2.setByte(pos - 5, val);
+        }
+        else {
+            throw new IllegalArgumentException("Byte position out of bounds");
+        }
+    }
+
 
     public void io() {
 
     }
 
+    public int getCounter() {
+        return myCounter;
+    }
 }

@@ -37,13 +37,14 @@ public class Main {
         }
         else if (args[0].equals("--debug") || args[0].equals("-d")) {
             Debugger debug = new Debugger(getInput(args[1]));
+            debug.start();
         }
         else if (args[0].equals("--simulate") || args[0].equals("-s")) {
             Assembler asm = new Assembler();
-            Simulator sim = new Simulator();
-
             asm.assemble(getInput(args[1]));
-            sim.run(asm.getMemory(), asm.getCounter());
+            Simulator sim = new Simulator(asm.getMemory(), asm.getCounter());
+            sim.simulate();
+            sim.closeDevices();
         }
     }
 
@@ -63,9 +64,7 @@ public class Main {
             if (line == null) {
                 break;
             }
-            if (!line.equals("") && line.charAt(0) != '*') {
-                program.add(line);
-            }
+            program.add(line);
         }
         in.close();
         fr.close();
