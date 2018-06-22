@@ -43,10 +43,17 @@ public class Simulator {
 
         myDevices = new IODevice[21];
 
-        for (int i = 0; i < 21; i++)
+        for (int i = 0; i <= 7; i++) {
             myDevices[i] = new TapeUnit(i);
+        }
+        for (int i = 8; i <= 15; i++) {
+            myDevices[i] = new DiskUnit(i);
+        }
+        myDevices[16] = new CardReader();
+        myDevices[17] = new CardWriter();
         myDevices[18] = new LinePrinter();
         myDevices[19] = new TypeWriter();
+        myDevices[20] = new PaperTape();
     }
 
     public Simulator(Word[] program, int initial) {

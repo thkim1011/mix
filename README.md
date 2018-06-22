@@ -72,3 +72,5 @@ I'm honestly surprised that I even came this far.
 
 ## TODO
 * Handle Overflow (esp. during NUM).
+* Implement Disk and Drum Units.
+* Implement Paper Tape unit. 

@@ -19,7 +19,7 @@ public class TypeWriter implements InputDevice {
     @Override
     public Word getWord() {
         if (counter == 0) {
-            currentLine = reformat(scan.nextLine());
+            currentLine = IODevice.reformat(scan.nextLine(), getBlockSize());
         }
         Word w = new Word();
         for (int i = counter; i < counter + 5; i++) {
@@ -30,13 +30,5 @@ public class TypeWriter implements InputDevice {
         return w;
     }
 
-    private String reformat(String line) {
-        if (line.length() >= 70) {
-            return line.substring(0, 70);
-        }
-        for (int i = line.length(); i < 70; i++) {
-            line += " ";
-        }
-        return line;
-    }
+
 }

@@ -1,6 +1,7 @@
 package debugger;
 
 import assembler.Assembler;
+import main.Constants;
 import main.Word;
 import simulator.Simulator;
 import java.util.List;
@@ -145,7 +146,12 @@ public class Debugger {
      * @param name
      */
     public void printChar(String name) {
-
+        String out = "";
+        Word w = findWord(name);
+        for (int i = 1; i <= 5; i++) {
+            out += Constants.CHARACTERS[w.getByte(i)];
+        }
+        System.out.println(out);
     }
 
     public void printValue(String name) {
@@ -165,16 +171,16 @@ public class Debugger {
         } else if (name.equals("rI1")) {
             return mySimulator.getIndexRegister(1).getWord();
         } else if (name.equals("rI2")) {
-            return mySimulator.getIndexRegister(1).getWord();
+            return mySimulator.getIndexRegister(2).getWord();
         } else if (name.equals("rI3")) {
-            return mySimulator.getIndexRegister(1).getWord();
+            return mySimulator.getIndexRegister(3).getWord();
         } else if (name.equals("rI4")) {
-            return mySimulator.getIndexRegister(1).getWord();
+            return mySimulator.getIndexRegister(4).getWord();
         } else if (name.equals("rI5")) {
-            return mySimulator.getIndexRegister(1).getWord();
+            return mySimulator.getIndexRegister(5).getWord();
         } else if (name.equals("rI6")) {
-            return mySimulator.getIndexRegister(1).getWord();
-        } else if (name.equals("rI7")) {
+            return mySimulator.getIndexRegister(6).getWord();
+        } else if (name.equals("rJ")) {
             return mySimulator.getJumpRegister().getWord();
         } else if (myAssembler.isWValue(name)) {
             return myAssembler.evaluateWValue(name);
