@@ -156,6 +156,7 @@ public class Word {
     public LiteralConstant getLiteralConstant(String wval) {
         return new LiteralConstant(myName, wval, mySign, myBytes[0], myBytes[1]);
     }
+
     @Override
     public boolean equals(Object other) {
         Word w = (Word) other;

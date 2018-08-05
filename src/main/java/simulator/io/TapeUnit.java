@@ -20,10 +20,11 @@ public class TapeUnit implements InputDevice, OutputDevice {
     private boolean accessed;
     private int number;
 
-    public TapeUnit(int number) {
+    public TapeUnit(int n) {
         myMemory = new Word[4000];
         tapePtr = 0;
         accessed = false;
+        number = n;
         try {
             FileReader fr = new FileReader("tape" + number + ".mix");
             BufferedReader br = new BufferedReader(fr);

@@ -12,7 +12,7 @@ START   OUT  MSG1(PRINTER)
         IN   INPUT(TERM)   Which tape unit to use?
         LDA  INPUT
         ENTX 0
-        SRAX 11
+        SRAX 9
         NUM
         STA  CHANGE(4:4)   Changes tape unit.
 
@@ -38,9 +38,10 @@ END     OUT  OUTPUT
 * FORMAT SUBROUTINE
 FORMAT  STJ  RETURN
         CMPX SPACE(5:5)    Check if last char is a " "
-        JNE  *+2
+        JNE  BREAK
         SRAX 1
-        NUM
+        JMP  *-3
+BREAK   NUM
 RETURN  JMP  *
 
 * STRINGS
