@@ -1,19 +1,15 @@
 apply plugin: 'java'
 
 repositories {
-    maven { url 'http://repo1.maven.org/maven2' }
+    mavenCentral()
 }
-
-   
  
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
 
 jar {
     manifest {
-        attributes(
-                'Main-Class': 'main.Main'
-        )
+        attributes 'Main-Class': 'main.Main'
     }
 }
